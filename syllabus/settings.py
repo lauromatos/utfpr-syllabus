@@ -68,7 +68,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'syllabus_new.wsgi.application'
+WSGI_APPLICATION = 'syllabus.wsgi.application'
 
 
 # Database
