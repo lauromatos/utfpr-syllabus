@@ -1,2 +1,2 @@
-# sylabus
+# UTFPR sylabus
 UTFPR Syllabus
