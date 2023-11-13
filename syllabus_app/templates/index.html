@@ -7,10 +7,14 @@
     <em>Lauro Matos, Igor Custódio e Matheus</em>!
   </p>
   <h2>Dynamic content</h2>
-  <p>O programa tem os seguintes dados:</p>
+  <p>O sistema tem os seguintes dados:</p>
   <ul>
     <li><strong>Disciplinas:</strong> {{ num_disciplinas }}</li>
     <li><strong>Alunos:</strong> {{ num_aluno }}</li>
     <li><strong>Conjuntos de Disciplinas:</strong> {{ num_conjunto_disciplinas }}</li>
   </ul>
+
+  <p>
+    Você visitou essa página {{ num_visits }}{% if num_visits == 1 %} time{% else %} vezes{% endif %}.
+  </p>
 {% endblock %}
