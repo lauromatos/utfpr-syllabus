@@ -1,0 +1,38 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h1>Conjunto de Disciplinas: {{ conjuntodisciplinas.nome_conjunto }}</h1>
+
+<div style="margin-left:20px;margin-top:20px">
+<h4>Disciplinas Cadastradas nesse Conjunto</h4>
+
+<ul>
+  {% for nome_disciplina in conjuntodisciplinas.cod_optativa_set.all %}
+  <li>
+    <a href="{{ disciplina.get_absolute_url }}">{{ disciplina.nome_disciplina }}</a>
+  </li>
+  {% empty %}
+  <li>Não existem Disciplinas cadastradas nesse Conjunto.</li>
+  {% endfor %}
+</ul>
+
+{% endblock %}
+
+
+{% block sidebar %}
+  {{ block.super }}
+
+  {% if perms.syllabus_app.change_conjuntodisciplinas or perms.syllabus_app.delete_conjuntodisciplinas %}
+  <hr>
+  <ul class="sidebar-nav">
+    {% if perms.syllabus_app.conjuntodisciplinas %}
+    <li><a href="{% url 'conjuntodisciplinas-update' conjuntodisciplinas.id %}">Atualizar Conjunto de Disciplinas</a></li>
+    {% endif %}
+    {% if not cod_optativa.conjuntodisciplinas_set.all and perms.syllabus_app.conjuntodisciplinas %}
+      <li><a href="{% url 'conjuntodisciplinas-delete' conjuntodisciplinas.id %}">Excluir Conjunto de Disciplinas</a></li>
+    {% endif %}
+    </ul>
+  {% endif %}
+
+{% endblock %}

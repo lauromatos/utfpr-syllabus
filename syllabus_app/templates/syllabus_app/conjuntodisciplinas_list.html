@@ -1,0 +1,23 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h1>Lista de Conjunto de Disciplinas</h1>
+
+{% if conjuntodisciplinas_list %}
+  <ul>
+
+  {% for conjuntodisciplinas in conjuntodisciplinas_list %}
+    <li>
+      <a href="{{ conjuntodisciplinas.get_absolute_url }}">{{ conjuntodisciplinas }}</a>
+    </li>
+  {% endfor %}
+
+ </ul>
+{% else %}
+  <p>Não existem Conjunto de Disciplinas cadastrados.</p>
+{% endif %}
+
+
+{% endblock %}
+

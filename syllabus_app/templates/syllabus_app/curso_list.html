@@ -1,0 +1,21 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>Lista de Cursos</h1>
+
+    {% if curso_list %}
+    <ul>
+
+      {% for curso in curso_list %}
+      <li>
+        <a href="{{ curso.get_absolute_url }}">{{ curso.nome_curso }}</a> ({{curso.departamento}})
+      </li>
+      {% endfor %}
+
+    </ul>
+
+    {% else %}
+      <p>Não existe Curso cadastrado no sistema.</p>
+    {% endif %}       
+{% endblock %}
+

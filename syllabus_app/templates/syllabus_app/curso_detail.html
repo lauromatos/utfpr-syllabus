@@ -1,0 +1,38 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h1>Curso: {{ curso.nome_curso }}</h1>
+
+<div style="margin-left:20px;margin-top:20px">
+<h4>Disciplinas Cadastradas</h4>
+
+<ul>
+  {% for nome_curso in curso.nome_curso_set.all %}
+  <li>
+    <a href="{{ curso.get_absolute_url }}">{{ curso }}</a>
+  </li>
+  {% empty %}
+  <li>Não existem Cursos cadastradas.</li>
+  {% endfor %}
+</ul>
+
+{% endblock %}
+
+
+{% block sidebar %}
+  {{ block.super }}
+
+  {% if perms.syllabus_app.change_departamento or perms.syllabus_app.delete_departamento %}
+  <hr>
+  <ul class="sidebar-nav">
+    {% if perms.syllabus_app.change_departamento %}
+    <li><a href="{% url 'departamento-update' departamento.id %}">Atualizar Departamento</a></li>
+    {% endif %}
+    {% if not departamento.curso_set.all and perms.syllabus_app.departamento %}
+      <li><a href="{% url 'departamento-delete' departamento.id %}">Excluir Departamento</a></li>
+    {% endif %}
+    </ul>
+  {% endif %}
+
+{% endblock %}

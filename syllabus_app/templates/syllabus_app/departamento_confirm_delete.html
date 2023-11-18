@@ -1,0 +1,14 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h1>Excluir Departamento: {{ departamento }}</h1>
+
+<p>Você tem certeza que gostaria de excluir esse Departamento?</p>
+
+<form action="" method="POST">
+  {% csrf_token %}
+  <input type="submit" action="" value="Yes, delete.">
+</form>
+
+{% endblock %}

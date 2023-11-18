@@ -1,0 +1,23 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h1>Lista de Departamentos</h1>
+
+{% if departamento_list %}
+  <ul>
+
+  {% for departamento in departamento_list %}
+    <li>
+      <a href="{{ departamento.get_absolute_url }}">{{ departamento.departamento }}</a> ({{departamento.nome_departamento}})
+    </li>
+  {% endfor %}
+
+ </ul>
+{% else %}
+  <p>Não existem Departamentos cadastrados.</p>
+{% endif %}
+
+
+{% endblock %}
+

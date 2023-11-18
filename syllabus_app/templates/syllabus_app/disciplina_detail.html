@@ -1,0 +1,38 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h1>Disciplina: {{ disciplina.nome_disciplina }}</h1>
+
+<div style="margin-left:20px;margin-top:20px">
+<h4>Disciplinas Cadastradas</h4>
+
+<ul>
+  {% for nome_disciplina in disciplina.nome_disciplina_set.all %}
+  <li>
+    <a href="{{ disciplina.get_absolute_url }}">{{ disciplina.nome_disciplina }}</a>
+  </li>
+  {% empty %}
+  <li>Não existem Disciplinas cadastradas.</li>
+  {% endfor %}
+</ul>
+
+{% endblock %}
+
+
+{% block sidebar %}
+  {{ block.super }}
+
+  {% if perms.syllabus_app.change_departamento or perms.syllabus_app.delete_departamento %}
+  <hr>
+  <ul class="sidebar-nav">
+    {% if perms.syllabus_app.change_disciplina %}
+    <li><a href="{% url 'disciplina-update' disciplina.id %}">Atualizar Disciplina</a></li>
+    {% endif %}
+    {% if not disciplina.curso_set.all and perms.syllabus_app.disciplina %}
+      <li><a href="{% url 'disciplina-delete' disciplina.id %}">Excluir Disciplina</a></li>
+    {% endif %}
+    </ul>
+  {% endif %}
+
+{% endblock %}

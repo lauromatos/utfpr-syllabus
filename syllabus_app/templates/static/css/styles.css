@@ -1,0 +1,55 @@
+.sidebar-nav {
+    margin-top: 50px;
+    padding: 0;
+    list-style: none;
+  }
+
+  .html {
+    background-color:#F4F4F4;
+    font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+    font-size:12px;
+  }
+  
+  .body {
+    width:500px;
+    border:0px solid #ddd;
+    margin:30px auto;
+    background-color:#FFF;
+    padding:10px 30px;
+    border-radius:30px;
+  }
+  
+  .h2 {
+    font-family:Georgia, "Times New Roman", Times, serif;
+    font-size:30px;
+    font-style:italic;
+    letter-spacing:-0.05em;
+    color:rgba(1, 193, 252, 0.89);
+    margin:20px 0 20px;
+    text-shadow:1px 1px 2px #666;
+  }
+  
+  .input {
+    display:block;
+    margin-bottom:20px;
+    border:1px solid #999;
+    padding:8px;
+    border-radius:3px;
+  }
+  
+  .input:focus {
+    border:1px solid #ccc;
+    outline:none;
+  }
+  
+ .input[type=submit] {
+    width:100px;
+    color:#FFF;
+    background:linear-gradient(top, rgb(1, 193, 252, 0.89), rgb(19, 18, 18) );
+    background:-webkit-linear-gradient(top, rgb(1, 193, 252, 0.89), rgb(0, 0, 0) );
+    background:-moz-linear-gradient(top, rgb(1, 193, 252, 0.89), rgb(0, 0, 0) );
+    border:1px solid #333;
+    cursor:pointer;
+  }
+  
+  

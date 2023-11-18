@@ -1,0 +1,22 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h1>Listar as Disciplinas Cursadas</h1>
+
+{% if disciplinascursadas_list %}
+  <ul>
+
+  {% for disciplinascursadas in disciplinascursadas_list %}
+    <li>
+      <a href="{{ disciplinascursadas.get_absolute_url }}">{{ disciplinascursadas }}
+      </a>
+    </li>
+  {% endfor %}
+
+ </ul>
+{% else %}
+  <p>Não existem Disciplinas Cursadas cadastradas.</p>
+{% endif %}
+  
+{% endblock %}

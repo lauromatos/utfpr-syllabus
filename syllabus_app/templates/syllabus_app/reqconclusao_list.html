@@ -1,0 +1,21 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>Requisitos de Conclusão de Curso</h1>
+
+    {% if reqconclusao_list %}
+    <ul>
+
+      {% for reqconclusao in reqconclusao_list %}
+      <li>
+        <a href="{{ reqconclusao.get_absolute_url }}">{{ reqconclusao }}</a>
+      </li>
+      {% endfor %}
+
+    </ul>
+
+    {% else %}
+      <p>Não existem Requisitos cadastrado no sistema.</p>
+    {% endif %}       
+{% endblock %}
+

@@ -1,0 +1,38 @@
+
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h1>Aluno: {{ disciplinascursadas.ra_aluno }} </h1>
+
+<div style="margin-left:20px;margin-top:20px">
+<h4>Disciplinas Cursadas</h4>
+
+<dl>
+{% for cod_disciplina in disciplinascursadas.cod_disciplina_set.all %}
+  <dt><a href="{% url 'disciplinascursadas-detail' disciplinascursadas.pk %}">{{disciplinascursadas}}</a> ({{cod_disciplina.disciplinascursadas_set.all.count}})</dt>
+  <dd>{{disciplina.cod_disciplina}}</dd>
+  {% empty %}
+  <p>Esse aluno não possui Disciplinas Cursadas cadastradas.</p>
+{% endfor %}
+</dl>
+
+</div>
+{% endblock %}
+
+{% block sidebar %}
+  {{ block.super }}
+
+  {% if perms.syllabus_app.change_disciplinascursadas or perms.syllabus_app.delete_disciplinascursadas %}
+  <hr>
+  <ul class="sidebar-nav">
+    {% if perms.syllabus_app.change_disciplinascursadas %}
+      <li><a href="{% url 'disciplinascursadas-update' disciplinascursadas.id %}">Update disciplinascursadas</a></li>
+    {% endif %}
+    {% if not disciplinascursadas.ra_aluno_set.all and perms.syllabus_app.delete_disciplinascursadas %}
+      <li><a href="{% url 'disciplinascursadas-delete' disciplinascursadas.id %}">Delete disciplinascursadas</a></li>
+    {% endif %}
+    </ul>
+  {% endif %}
+
+{% endblock %}

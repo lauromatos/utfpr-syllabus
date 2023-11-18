@@ -1,0 +1,23 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h1>Lista de Disciplinas</h1>
+
+{% if disciplina_list %}
+  <ul>
+
+  {% for disciplina in disciplina_list %}
+    <li>
+      <a href="{{ disciplina.get_absolute_url }}">{{ disciplina }}</a>
+    </li>
+  {% endfor %}
+
+ </ul>
+{% else %}
+  <p>Não existem Disciplinas cadastrados.</p>
+{% endif %}
+
+
+{% endblock %}
+
