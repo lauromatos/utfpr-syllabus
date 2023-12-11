@@ -67,3 +67,13 @@ urlpatterns += [
     path('reqconclusao/<int:pk>/update/', views.ReqConclusaoUpdate.as_view(), name='reqconclusao-update'),
     path('reqconclusao/<int:pk>/delete/', views.ReqConclusaoDelete.as_view(), name='reqconclusao-delete'),
 ]
+
+
+
+from django.urls import path
+from . import views
+
+urlpatterns += [
+    # ... outras urls ...
+    path('verificarconclusao/<int:aluno_id>/', views.verificar_conclusao_curso, name='verificar_conclusao_curso'),
+]

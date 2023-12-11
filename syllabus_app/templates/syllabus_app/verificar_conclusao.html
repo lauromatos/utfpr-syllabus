@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verificar Conclusão do Curso</title>
+</head>
+<body>
+    <h1>Informações do Aluno: {{ aluno.nome_aluno }}</h1>
+    
+    <h2>Disciplinas Cursadas:</h2>
+    <ul>
+        {% for disciplina in disciplinas_cursadas %}
+            <li>{{ disciplina.cod_disciplina.nome_disciplina }}</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Adicione o restante das informações necessárias, como conjuntos de disciplinas, requisitos, etc. -->
+</body>
+</html>

@@ -10,6 +10,7 @@ def index(request):
     num_aluno = Aluno.objects.count()
     num_conjunto_disciplinas = ConjuntoDisciplinas.objects.count()
     num_disciplina = Disciplina.objects.count()
+    aluno = Aluno.objects.get(id=1)
 
     # Number of visits to this view, as counted in the session variable.
     num_visits = request.session.get('num_visits', 0)
@@ -17,6 +18,7 @@ def index(request):
 
 
     context = {
+        'aluno': aluno,
         'num_aluno': num_aluno,
         'num_conjunto_disciplinas': num_conjunto_disciplinas,
         'num_disciplina': num_disciplina,
@@ -280,3 +282,36 @@ class ReqConclusaoDelete(PermissionRequiredMixin, DeleteView):
             return HttpResponseRedirect(
                 reverse("reqconclusao-delete", kwargs={"pk": self.object.pk})
             )
+        
+
+
+
+from django.shortcuts import render
+from .models import Aluno, DisciplinasCursadas, ConjuntoDisciplinas, ReqConclusao
+from django.contrib.auth.models import User
+
+def verificar_conclusao_curso(request, aluno_id):
+    aluno = Aluno.objects.get(id=aluno_id)
+    disciplinas_cursadas = DisciplinasCursadas.objects.filter(ra_aluno=aluno)
+    
+    conjunto_obrigatorio = ConjuntoDisciplinas.objects.filter(ch_obrigatoria__gt=0)
+    conjuntos_optativos = ConjuntoDisciplinas.objects.exclude(ch_obrigatoria__gt=0)
+    
+    requisitos_conclusao = ReqConclusao.objects.get(nome_curso=aluno.nome_curso)
+    
+    disciplinas_obrigatorias_cursadas = []
+    disciplinas_optativas_cursadas = []
+
+    for disciplina_cursada in disciplinas_cursadas:
+        if disciplina_cursada.cod_disciplina in conjunto_obrigatorio.values_list('disciplina', flat=True):
+            disciplinas_obrigatorias_cursadas.append(disciplina_cursada.cod_disciplina)
+        elif disciplina_cursada.cod_disciplina in conjuntos_optativos.values_list('disciplina', flat=True):
+            disciplinas_optativas_cursadas.append(disciplina_cursada.cod_disciplina)
+
+    return render(request, 'verificar_conclusao.html', {
+        'aluno': aluno,
+        'disciplinas_cursadas': disciplinas_cursadas,
+        'conjunto_obrigatorio': conjunto_obrigatorio,
+        'conjuntos_optativos': conjuntos_optativos,
+        'requisitos_conclusao': requisitos_conclusao,
+    })

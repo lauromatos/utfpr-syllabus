@@ -36,6 +36,12 @@
          {% endif %}
          
          <li><a href="{% url 'disciplinascursadas' %}">Minhas Disciplinas</a></li>
+          {% if aluno.id %}
+            <a href="{% url 'verificar_conclusao_curso' aluno.id %}">Verificar Conclusão do Curso</a>
+          {% else %}
+            <!-- Tratar o caso em que aluno.id não está definido ou é vazio -->
+            Algo deu errado ao obter o ID do aluno.
+          {% endif %}
          <li><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>
        {% else %}
          <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>
