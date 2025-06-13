@@ -5,6 +5,7 @@ from syllabus_app import views
 urlpatterns = [
     path('', views.index, name='index'),
     path('curso/', views.CursoListView.as_view(), name='curso'),
+    path('register/', views.register, name='register'),
 #    path('disciplinascursadas/<int:pk>', views.DisciplinasCursadasDetailView.as_view(), name='disciplinascursadas-detail'),
 ]
 
@@ -17,7 +18,7 @@ urlpatterns += [
 # Add URLConf to view, create, update, and delete disciplinas cursadas
 urlpatterns += [
 #    path('disciplinascursadas/', views.DisciplinasCursadasListView.as_view(), name='disciplinascursadas'),
-    path('disciplinascursadas/', views.DisciplinasCursadasListView.as_view(), name='disciplinascursadas'),
+    path('disciplinascursadas/', views.DisciplinasCursadasAlunoListView.as_view(), name='disciplinascursadas'),
     path('disciplinascursadas/<int:pk>', views.DisciplinasCursadasDetailView.as_view(), name='disciplinascursadas-detail'),
     path('disciplinascursadas/create/', views.DisciplinasCursadasCreate.as_view(), name='disciplinascursadas-create'),
     path('disciplinascursadas/<int:pk>/update/', views.DisciplinasCursadasUpdate.as_view(), name='disciplinascursadas-update'),
@@ -77,3 +78,4 @@ urlpatterns += [
     # ... outras urls ...
     path('verificarconclusao/<int:aluno_id>/', views.verificar_conclusao_curso, name='verificar_conclusao_curso'),
 ]
+urlpatterns += [path('aluno/disciplinas/adicionar/', views.AlunoAdicionaDisciplinaView.as_view(), name='aluno_adiciona_disciplina'),]

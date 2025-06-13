@@ -31,16 +31,17 @@
       <ul class="sidebar-nav">
        {% if user.is_authenticated %}
          <li>Usuário: {{ user.get_username }}</li>
+         {# Link para admin adicionar disciplina cursada para qualquer aluno #}
          {% if perms.syllabus_app.add_disciplinascursadas %}
-         <li><a href="{% url 'disciplinascursadas-create' %}">Adicionar Disciplina Cursada</a></li>
+         <li><a href="{% url 'disciplinascursadas-create' %}">Adicionar Disciplina Cursada (Admin)</a></li>
          {% endif %}
          
          <li><a href="{% url 'disciplinascursadas' %}">Minhas Disciplinas</a></li>
-          {% if aluno.id %}
-            <a href="{% url 'verificar_conclusao_curso' aluno.id %}">Verificar Conclusão do Curso</a>
-          {% else %}
-            <!-- Tratar o caso em que aluno.id não está definido ou é vazio -->
-            Algo deu errado ao obter o ID do aluno.
+          {% if user.aluno and user.aluno.id %}
+            <li><a href="{% url 'aluno_adiciona_disciplina' %}">Adicionar Minha Disciplina Cursada</a></li>
+            <li><a href="{% url 'verificar_conclusao_curso' user.aluno.id %}">Verificar Conclusão do Curso</a></li>
+          {% elif user.is_authenticated and not user.is_staff and not user.aluno %}
+            <!-- Usuário logado, não é staff, mas não tem perfil Aluno. Links específicos de aluno não aparecem. -->
           {% endif %}
          <li><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>
        {% else %}

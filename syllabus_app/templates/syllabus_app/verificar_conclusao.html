@@ -1,18 +1,46 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Verificar Conclusão do Curso</title>
-</head>
-<body>
-    <h1>Informações do Aluno: {{ aluno.nome_aluno }}</h1>
-    
-    <h2>Disciplinas Cursadas:</h2>
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Verificação de Conclusão do Curso para {{ aluno.nome_aluno }} (RA: {{ aluno.ra_aluno }})</h1>
+
+  <h2>Curso: {{ aluno.nome_curso.nome_curso }}</h2>
+
+  {% if requisitos_conclusao %}
+    <h3>Requisitos do Curso:</h3>
     <ul>
-        {% for disciplina in disciplinas_cursadas %}
-            <li>{{ disciplina.cod_disciplina.nome_disciplina }}</li>
-        {% endfor %}
+      <li>Carga Horária Total Necessária: {{ requisitos_conclusao.ch_total }} horas</li>
+      <li>Carga Horária Obrigatória Necessária: {{ requisitos_conclusao.ch_obrigatorias }} horas</li>
+      <li>Carga Horária Optativa Necessária: {{ requisitos_conclusao.ch_optativas }} horas</li>
+      <li>Carga Horária Estágio Necessária: {{ requisitos_conclusao.ch_estagio }} horas</li>
     </ul>
 
-    <!-- Adicione o restante das informações necessárias, como conjuntos de disciplinas, requisitos, etc. -->
-</body>
-</html>
+    <h3>Progresso do Aluno:</h3>
+    <ul>
+      <li>Carga Horária Obrigatória Cursada: {{ ch_obrigatorias_cursadas }} horas</li>
+      <li>Carga Horária Optativa Cursada: {{ ch_optativas_cursadas }} horas</li>
+      <li><strong>Total Cursado (Obrigatórias + Optativas): {{ ch_obrigatorias_cursadas|add:ch_optativas_cursadas }} horas</strong></li>
+    </ul>
+
+    <h3>Disciplinas Cursadas:</h3>
+    <h4>Obrigatórias ({{ cursadas_obrigatorias|length }}):</h4>
+    <ul>
+      {% for disciplina in cursadas_obrigatorias %}
+        <li>{{ disciplina.cod_disciplina }} - {{ disciplina.nome_disciplina }} ({{ disciplina.carga_horaria }}h)</li>
+      {% empty %}
+        <li>Nenhuma disciplina obrigatória cursada.</li>
+      {% endfor %}
+    </ul>
+    <h4>Optativas ({{ cursadas_optativas|length }}):</h4>
+    <ul>
+      {% for disciplina in cursadas_optativas %}
+        <li>{{ disciplina.cod_disciplina }} - {{ disciplina.nome_disciplina }} ({{ disciplina.carga_horaria }}h)</li>
+      {% empty %}
+        <li>Nenhuma disciplina optativa cursada.</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Os requisitos de conclusão para o curso {{ aluno.nome_curso.nome_curso }} não foram definidos no sistema.</p>
+  {% endif %}
+
+  <p><a href="{% url 'index' %}">Voltar para a página inicial</a></p>
+{% endblock %}

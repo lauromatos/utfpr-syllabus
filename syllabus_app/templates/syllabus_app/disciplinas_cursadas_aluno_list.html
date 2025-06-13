@@ -1,20 +1,46 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
+  {% if aluno %}
+    <h1>Minhas Disciplinas Cursadas - {{ aluno.nome_aluno }} (RA: {{ aluno.ra_aluno }})</h1>
+  {% else %}
+    <h1>Minhas Disciplinas Cursadas</h1>
+    {% if user.is_authenticated and not user.is_staff and not user.is_superuser %}
+      {# Usuário logado, não é admin/staff, mas não tem perfil Aluno. #}
+      {# A mensagem "Algo deu errado ao obter o ID do aluno" provavelmente vem de uma tentativa de acessar aluno.id ou similar sem esta verificação. #}
+      <p style="color: red;">Informações do perfil de aluno não encontradas. Se você é um aluno, por favor, contate o suporte.</p>
+    {% elif not user.is_authenticated %}
+        <p>Por favor, faça login para ver suas disciplinas.</p>
+    {% endif %}
+  {% endif %}
 
-<h1>Aluno: {{ disciplinascursadas.ra_aluno }} </h1>
+  {% if object_list %}
+    <ul>
+      {% for disciplina_cursada in object_list %}
+        <li>{{ disciplina_cursada.cod_disciplina.cod_disciplina }} - {{ disciplina_cursada.cod_disciplina.nome_disciplina }}</li>
+      {% endfor %}
+    </ul>
 
-<div style="margin-left:20px;margin-top:20px">
-<h4>Disciplinas Cursadas</h4>
+    {% if is_paginated %}
+      <div class="pagination">
+        <span class="page-links">
+          {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}">anterior</a>
+          {% endif %}
+          <span class="page-current">
+            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+          </span>
+          {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">próxima</a>
+          {% endif %}
+        </span>
+      </div>
+    {% endif %}
+  {% else %}
+    {% if aluno or user.is_staff or user.is_superuser %} {# Se for aluno ou admin/staff e não tiver disciplinas #}
+      <p>Nenhuma disciplina cursada encontrada.</p>
+    {% endif %} {# A mensagem para usuário não autenticado ou sem perfil já foi tratada acima #}
+  {% endif %}
 
-<dl>
-{% for cod_disciplina in disciplinascursadas.cod_disciplina_set.all %}
-  <dt><a href="{% url 'disciplinascursadas-detail' disciplinascursadas.id %}">{{disciplinascursadas}}</a> ({{cod_disciplina.disciplinascursadas_set.all.count}})</dt>
-  <dd>{{disciplina.cod_disciplina}}</dd>
-  {% empty %}
-  <p>Esse aluno não possui Disciplinas Cursadas cadastradas.</p>
-{% endfor %}
-</dl>
-
-</div>
+  <p><a href="{% url 'index' %}">Voltar para a página inicial</a></p>
 {% endblock %}

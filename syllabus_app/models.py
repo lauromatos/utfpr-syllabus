@@ -6,21 +6,24 @@ from django.conf import settings
 
 class Aluno(models.Model):
     """Modelo de cadastro de alunos."""
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     ra_aluno = models.IntegerField(unique=True, help_text='Digite seu RA', null=False)
     nome_aluno = models.CharField(max_length=60, help_text='Digite seu Nome')
     nome_curso = models.ForeignKey('Curso', on_delete=models.SET_NULL, null=True)
-    senha = models.CharField(max_length=64, help_text='Digite uma senha')
+    # O campo senha foi removido, será gerenciado pelo User do Django.
 
     class Meta:
         ordering = ['ra_aluno', 'nome_aluno']
 
     def get_absolute_url(self):
-            """Returns the url to access a particular Departamento instance."""
             return reverse('aluno-detail', args=[str(self.id)])
 
     def __str__(self):
         return f'{self.ra_aluno} - {self.nome_aluno}'
-    
+
+# É importante que o username do User seja o ra_aluno.
+# A ForeignKey em DisciplinasCursadas para AUTH_USER_MODEL usa to_field='username'.
+# Isso significa que o valor armazenado em DisciplinasCursadas.ra_aluno_id será o username do User.
 
 class Departamento(models.Model):
     departamento = models.CharField(max_length=10, unique=True, help_text='Digite a sigla do Departamento')
@@ -30,7 +33,6 @@ class Departamento(models.Model):
         ordering = ['departamento', 'nome_departamento']
 
     def get_absolute_url(self):
-            """Returns the url to access a particular Departamento instance."""
             return reverse('departamento-detail', args=[str(self.id)])
 
     def __str__(self):
@@ -42,7 +44,6 @@ class Curso(models.Model):
     departamento = models.ForeignKey('Departamento', on_delete=models.SET_NULL, null=True, help_text='Selecione o Departamento')
 
     def __str__(self):
-        """String for representing the Model object."""
         return self.nome_curso
 
 class ConjuntoDisciplinas(models.Model):
@@ -57,11 +58,9 @@ class ConjuntoDisciplinas(models.Model):
         ordering = ['cod_optativa', 'nome_conjunto']
 
     def get_absolute_url(self):
-        """Returns the url to access a particular author instance."""
         return reverse('conjuntodisciplinas-detail', args=[str(self.id)])
 
     def __str__(self):
-        """String for representing the Model object."""
         return f'{self.cod_optativa} - {self.nome_conjunto}'
 
 class Disciplina(models.Model):
@@ -78,11 +77,9 @@ class Disciplina(models.Model):
         ordering = ['cod_disciplina', 'nome_disciplina']
 
     def get_absolute_url(self):
-        """Returns the url to access a particular author instance."""
         return reverse('disciplina-detail', args=[str(self.id)])
 
     def __str__(self):
-        """String for representing the Model object."""
         return f'{self.cod_disciplina} - {self.nome_disciplina}'
 
 class DisciplinasCursadas(models.Model):
@@ -93,7 +90,6 @@ class DisciplinasCursadas(models.Model):
         ordering = ['ra_aluno', 'cod_disciplina']
 
     def get_absolute_url(self):
-        """Returns the url to access a particular author instance."""
         return reverse('disciplinascursadas-detail', args=[str(self.id)])
 
     def __str__(self):
@@ -113,5 +109,4 @@ class ReqConclusao(models.Model):
         return reverse('reqconclusao-detail', args=[str(self.id)])
 
     def __str__(self):
-        """String for representing the Model object."""
         return f'{self.nome_curso} - {self.ch_total} - {self.ch_obrigatorias} - {self.ch_optativas} - {self.ch_estagio}'

@@ -23,10 +23,6 @@
         <td>{{ form.username }}</td>
       </tr>
       <tr>
-        <td>{{ form.email.label_tag }}</td>
-        <td>{{ form.email }}</td>
-      </tr>
-      <tr>
         <td>{{ form.password.label_tag }}</td>
         <td>{{ form.password }}</td>
       </tr>
@@ -36,6 +32,7 @@
   </form>
 
   {# Assumes you setup the password_reset view in your URLconf #}
+  <p><a href="{% url 'register' %}">Não tem uma conta? Cadastre-se</a></p>
   <p><a href="{% url 'password_reset' %}">Esqueceu a senha?</a></p>
 
 {% endblock %}

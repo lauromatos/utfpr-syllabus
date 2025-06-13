@@ -1,0 +1,18 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  {% if aluno %}
+    <h2>Adicionar Disciplina Cursada para {{ aluno.nome_aluno }} (RA: {{ aluno.ra_aluno }})</h2>
+  {% else %}
+    <h2>Adicionar Disciplina Cursada</h2>
+  {% endif %}
+  
+  <form method="post">
+    {% csrf_token %}
+    <table>
+      {{ form.as_table }} {# O formulário só terá o campo cod_disciplina #}
+    </table>
+    <button type="submit">Adicionar Disciplina</button>
+  </form>
+  <p><a href="{% url 'disciplinascursadas' %}">Cancelar e voltar para Minhas Disciplinas</a></p>
+{% endblock %}
