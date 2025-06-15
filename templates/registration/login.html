@@ -1,7 +1,5 @@
 {% extends "base_generic.html" %}
-
 {% block content %}
-
   {% if form.errors %}
     <p>Seu RA ou Senha estão incorretos. Por favor tente novamente.</p>
   {% endif %}
@@ -30,9 +28,6 @@
     <input type="submit" value="login" />
     <input type="hidden" name="next" value="{{ next }}" />
   </form>
-
-  {# Assumes you setup the password_reset view in your URLconf #}
   <p><a href="{% url 'register' %}">Não tem uma conta? Cadastre-se</a></p>
   <p><a href="{% url 'password_reset' %}">Esqueceu a senha?</a></p>
-
 {% endblock %}

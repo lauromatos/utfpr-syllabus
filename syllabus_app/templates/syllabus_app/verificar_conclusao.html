@@ -1,10 +1,7 @@
 {% extends "base_generic.html" %}
-
 {% block content %}
   <h1>Verificação de Conclusão do Curso para {{ aluno.nome_aluno }} (RA: {{ aluno.ra_aluno }})</h1>
-
   <h2>Curso: {{ aluno.nome_curso.nome_curso }}</h2>
-
   {% if requisitos_conclusao %}
     <h3>Requisitos do Curso:</h3>
     <ul>
@@ -13,14 +10,12 @@
       <li>Carga Horária Optativa Necessária: {{ requisitos_conclusao.ch_optativas }} horas</li>
       <li>Carga Horária Estágio Necessária: {{ requisitos_conclusao.ch_estagio }} horas</li>
     </ul>
-
     <h3>Progresso do Aluno:</h3>
     <ul>
       <li>Carga Horária Obrigatória Cursada: {{ ch_obrigatorias_cursadas }} horas</li>
       <li>Carga Horária Optativa Cursada: {{ ch_optativas_cursadas }} horas</li>
       <li><strong>Total Cursado (Obrigatórias + Optativas): {{ ch_obrigatorias_cursadas|add:ch_optativas_cursadas }} horas</strong></li>
     </ul>
-
     <h3>Disciplinas Cursadas:</h3>
     <h4>Obrigatórias ({{ cursadas_obrigatorias|length }}):</h4>
     <ul>
@@ -41,6 +36,5 @@
   {% else %}
     <p>Os requisitos de conclusão para o curso {{ aluno.nome_curso.nome_curso }} não foram definidos no sistema.</p>
   {% endif %}
-
   <p><a href="{% url 'index' %}">Voltar para a página inicial</a></p>
 {% endblock %}

@@ -1,0 +1,83 @@
+:root {
+  --utfpr-header-yellow: #FFBE00;
+  --utfpr-highlight-yellow: #fcbc00;
+  --utfpr-link-blue: #007eb1;
+  --utfpr-link-blue-darker: #006b96;
+  --text-dark: #333333;
+  --text-light: #ffffff;
+  --bg-light-gray: #f8f9fa;
+}
+
+body {
+  font-family: 'Poppins', 'Open Sans', sans-serif;
+  color: var(--text-dark);
+  background-color: #FAFDFD;
+}
+
+.site-header {
+  background-color: var(--utfpr-header-yellow);
+  border-bottom: 3px solid var(--utfpr-highlight-yellow);
+}
+
+.site-header .navbar-brand {
+  color: var(--text-dark);
+  font-size: 1.75rem;
+}
+
+.site-header .navbar-brand:hover,
+.site-header .navbar-brand:focus {
+  color: var(--utfpr-link-blue);
+  text-decoration: none;
+}
+
+.site-header .navbar-brand img {
+  background-color: white;
+  padding: 5px;
+  border-radius: 3px;
+  height: 70px;
+}
+
+.sidebar-nav {
+  padding: 15px;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 1rem;
+}
+
+.sidebar-nav li a {
+  color: var(--utfpr-link-blue);
+  padding: 8px 10px;
+  display: block;
+  text-decoration: none;
+  border-radius: 0.25rem;
+  margin-bottom: 2px;
+}
+
+.sidebar-nav li a:hover {
+  color: var(--text-light);
+  background-color: var(--utfpr-link-blue);
+  text-decoration: none;
+}
+
+.sidebar-nav hr {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.col-sm-10 a {
+  color: var(--utfpr-link-blue);
+}
+
+.col-sm-10 a:hover {
+  color: var(--utfpr-link-blue-darker);
+  text-decoration: underline;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-dark);
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
