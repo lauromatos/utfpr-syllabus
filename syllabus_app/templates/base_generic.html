@@ -4,106 +4,94 @@
     {% block title %}<title>Sistema Syllabus</title>{% endblock %}
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-      integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
-      crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     {% load static %}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap" rel="stylesheet">
-
-    <link href="{% static 'css/styles.css' %}" rel="stylesheet" media="screen">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&family=Poppins:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
   </head>
   <body>
-  
-  <header class="site-header py-3 mb-4">
-    <div class="container">
-      <a href="{% url 'index' %}" class="navbar-brand d-flex align-items-center">
-        <img src="{% static 'images/utfpr_logo.png' %}" alt="UTFPR Logo" class="mr-3">
-        <strong>Sistema Syllabus</strong>
-      </a>
-    </div>
-  </header>
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-sm-2">
-      {% block sidebar %}
-      <ul class="sidebar-nav">
-        <li><a href="{% url 'index' %}">Início</a></li>
-        <li><a href="{% url 'curso' %}">Cursos Cadastrados</a></li>
-      </ul>
-    
-      <ul class="sidebar-nav">
-       {% if user.is_authenticated %}
-         <li>Usuário: {{ user.get_username }}</li>
-         {% if perms.syllabus_app.add_disciplinascursadas %}
-         <li><a href="{% url 'disciplinascursadas-create' %}">Adicionar Disciplina Cursada (Admin)</a></li>
-         {% endif %}
-         <li><a href="{% url 'disciplinascursadas' %}">Minhas Disciplinas</a></li>
-          {% if user.aluno and user.aluno.id %}
-            <li><a href="{% url 'aluno_adiciona_disciplina' %}">Adicionar Minha Disciplina Cursada</a></li>
-            <li><a href="{% url 'verificar_conclusao_curso' user.aluno.id %}">Verificar Conclusão do Curso</a></li>
+    <header class="site-header py-3 mb-4">
+      <div class="container">
+        <a href="{% url 'index' %}" class="navbar-brand d-flex align-items-center">
+          <img src="{% static 'images/utfpr_logo.png' %}" alt="UTFPR Logo" class="mr-3" style="height:40px;">
+          <strong>Sistema Syllabus</strong>
+        </a>
+      </div>
+    </header>
+    <div class="container-fluid">
+      <div class="row">
+        <nav class="col-md-3 d-none d-md-block bg-light sidebar py-3">
+          {% block sidebar %}
+          {% if user.is_authenticated %}
+            <ul class="sidebar-nav nav flex-column mb-3">
+              <li class="nav-item px-3 text-muted">Usuário: {{ user.get_username }}</li>
+            </ul>
           {% endif %}
-         <li><a href="{% url 'logout'%}?next={{request.path}}">Sair</a></li>
-       {% else %}
-         <li><a href="{% url 'login'%}?next={{request.path}}">Entrar</a></li>
-       {% endif %}
-      </ul>
-    
-       {% if user.is_staff %}
-       <hr>
-       <ul class="sidebar-nav">
-       <li>Administrativo</li>
-       <li><a href="{% url 'departamento' %}">Departamentos</a></li>
-       {% if perms.syllabus_app.add_departamento %}
-         <li><a href="{% url 'departamento-create' %}">Adicionar Departamento</a></li>
-       {% endif %}
-       <li><a href="{% url 'curso' %}">Cursos</a></li>
-       {% if perms.syllabus_app.add_curso %}
-         <li><a href="{% url 'curso-create' %}">Adicionar Curso</a></li>
-       {% endif %}
-       <li><a href="{% url 'conjuntodisciplinas' %}">Conjunto de Disciplinas</a></li>
-       {% if perms.syllabus_app.add_conjuntodisciplinas %}
-         <li><a href="{% url 'conjuntodisciplinas-create' %}">Adicionar Conjunto de Disciplinas</a></li>
-       {% endif %}
-       <li><a href="{% url 'disciplina' %}">Disciplinas</a></li>
-       {% if perms.syllabus_app.add_disciplina %}
-         <li><a href="{% url 'disciplina-create' %}">Adicionar Disciplina</a></li>
-       {% endif %}
-       
-       <li><a href="{% url 'reqconclusao' %}">Requisitos de Conclusão</a></li>
-       {% if perms.syllabus_app.add_reqconclusao %}
-         <li><a href="{% url 'reqconclusao-create' %}">Adicionar Requisitos de Conclusão</a></li>
-       {% endif %}
-       </ul>
-       {% endif %}
-    {% endblock %}
-      </div>
-      <div class="col-sm-10 ">
-      {% block content %}{% endblock %}
-      {% block pagination %}
-        {% if is_paginated %}
-            <div class="pagination">
+          <ul class="sidebar-nav nav flex-column">
+            <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Início</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'curso' %}">Cursos Cadastrados</a></li>
+            {% if user.is_authenticated %}
+              {% if perms.syllabus_app.add_disciplinascursadas %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'disciplinascursadas-create' %}">Adicionar Disciplina Cursada (Admin)</a></li>
+              {% endif %}
+              <li class="nav-item"><a class="nav-link" href="{% url 'disciplinascursadas' %}">Minhas Disciplinas</a></li>
+              {% if user.aluno and user.aluno.id %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'verificar_conclusao_curso' user.aluno.id %}">Verificar Conclusão</a></li>
+              {% endif %}
+              <li class="nav-item"><a class="nav-link text-danger" href="{% url 'logout'%}?next={{request.path}}">Sair</a></li>
+            {% else %}
+              <li class="nav-item"><a class="nav-link" href="{% url 'login'%}?next={{request.path}}">Entrar</a></li>
+            {% endif %}
+          </ul>
+          {% if user.is_staff %}
+          <hr>
+          <ul class="sidebar-nav nav flex-column">
+            <li class="nav-item">Administrativo</li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'departamento' %}">Departamentos</a></li>
+            {% if perms.syllabus_app.add_departamento %}
+              <li class="nav-item"><a class="nav-link" href="{% url 'departamento-create' %}">Adicionar Departamento</a></li>
+            {% endif %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'curso' %}">Cursos</a></li>
+            {% if perms.syllabus_app.add_curso %}
+              <li class="nav-item"><a class="nav-link" href="{% url 'curso-create' %}">Adicionar Curso</a></li>
+            {% endif %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'conjuntodisciplinas' %}">Conjunto de Disciplinas</a></li>
+            {% if perms.syllabus_app.add_conjuntodisciplinas %}
+              <li class="nav-item"><a class="nav-link" href="{% url 'conjuntodisciplinas-create' %}">Adicionar Conjunto de Disciplinas</a></li>
+            {% endif %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'disciplina' %}">Disciplinas</a></li>
+            {% if perms.syllabus_app.add_disciplina %}
+              <li class="nav-item"><a class="nav-link" href="{% url 'disciplina-create' %}">Adicionar Disciplina</a></li>
+            {% endif %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'reqconclusao' %}">Requisitos de Conclusão</a></li>
+            {% if perms.syllabus_app.add_reqconclusao %}
+              <li class="nav-item"><a class="nav-link" href="{% url 'reqconclusao-create' %}">Adicionar Requisitos de Conclusão</a></li>
+            {% endif %}
+          </ul>
+          {% endif %}
+          {% endblock %}
+        </nav>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-9 px-4">
+          {% block content %}{% endblock %}
+          {% block pagination %}
+            {% if is_paginated %}
+              <div class="pagination">
                 <span class="page-links">
-                    {% if page_obj.has_previous %}
-                        <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">previous</a>
-                    {% endif %}
-                    <span class="page-current">
-                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-                    </span>
-                    {% if page_obj.has_next %}
-                        <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">next</a>
-                    {% endif %}
+                  {% if page_obj.has_previous %}
+                    <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">Anterior</a>
+                  {% endif %}
+                  <span class="page-current">
+                    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+                  </span>
+                  {% if page_obj.has_next %}
+                    <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">Próxima</a>
+                  {% endif %}
                 </span>
-            </div>
-        {% endif %}
-      {% endblock %}
+              </div>
+            {% endif %}
+          {% endblock %}
+        </main>
       </div>
-    </div>    
     </div>
-    </body>
-    </html>
+  </body>
+</html>

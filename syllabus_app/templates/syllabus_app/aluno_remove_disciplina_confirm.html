@@ -1,0 +1,14 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Remover Disciplina Cursada</h1>
+  <p>Você tem certeza que deseja remover a disciplina "<strong>{{ object.cod_disciplina.nome_disciplina }} ({{ object.cod_disciplina.cod_disciplina }})</strong>" da sua lista de disciplinas cursadas?</p>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Sim, remover</button>
+    <a href="{% url 'disciplinascursadas' %}" class="btn btn-secondary">Cancelar</a>
+  </form>
+
+  <p class="mt-3"><a href="{% url 'disciplinascursadas' %}">Voltar para Minhas Disciplinas</a></p>
+{% endblock %}

@@ -3,13 +3,9 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 SECRET_KEY = 'django-insecure-wc&d*bo8gbfo2x$*a=-n!&rh2y6rjylm5t%i1sl^#e6r4fe)=u'
-
 DEBUG = True
-
 ALLOWED_HOSTS = []
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -53,15 +49,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'syllabus.wsgi.application'
 
-
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -78,22 +71,14 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'America/Sao_Paulo'
-
 USE_I18N = True
-
 USE_TZ = True
-
 
 STATIC_URL = '/static/'
 
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
-
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

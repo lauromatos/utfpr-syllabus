@@ -1,9 +1,10 @@
 :root {
-  --utfpr-header-yellow: #FFBE00;
-  --utfpr-highlight-yellow: #fcbc00;
+  --utfpr-header-yellow: #FFC933; /* Tom de amarelo ligeiramente mais claro */
+  --utfpr-highlight-yellow: #FFC220; /* Tom de destaque ligeiramente mais claro e intenso */
   --utfpr-link-blue: #007eb1;
   --utfpr-link-blue-darker: #006b96;
   --text-dark: #333333;
+  --utfpr-very-light-yellow: #FFF9E6; /* Cor inspirada em dsYellow-50 */
   --text-light: #ffffff;
   --bg-light-gray: #f8f9fa;
 }
@@ -11,7 +12,7 @@
 body {
   font-family: 'Poppins', 'Open Sans', sans-serif;
   color: var(--text-dark);
-  background-color: #FAFDFD;
+  background-color: var(--bg-light-gray); /* Alterado para a cor do menu lateral */
 }
 
 .site-header {
@@ -48,18 +49,22 @@ body {
 }
 
 .sidebar-nav li a {
-  color: var(--utfpr-link-blue);
+  color: var(--text-dark); /* Cor de texto inspirada em text-dsGray-900/text-[#0D1117] */
   padding: 8px 10px;
   display: block;
   text-decoration: none;
   border-radius: 0.25rem;
   margin-bottom: 2px;
+  border-left: 3px solid transparent; /* Para o efeito de borda no hover */
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out; /* Transição suave */
 }
 
 .sidebar-nav li a:hover {
-  color: var(--text-light);
-  background-color: var(--utfpr-link-blue);
+  color: var(--text-dark); /* Manter a cor do texto ou ajustar se necessário */
+  background-color: var(--utfpr-very-light-yellow); /* Fundo amarelo claro no hover */
+  border-left-color: var(--utfpr-highlight-yellow); /* Borda amarela no hover */
   text-decoration: none;
+  font-weight: bold; /* Inspirado em hover:font-bold */
 }
 
 .sidebar-nav hr {
@@ -80,4 +85,24 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--text-dark);
   margin-top: 1.5rem;
   margin-bottom: 1rem;
+}
+
+/* Customização de botões primários para alinhamento com a identidade visual */
+.btn-primary {
+  background-color: var(--utfpr-link-blue);
+  border-color: var(--utfpr-link-blue);
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  background-color: var(--utfpr-link-blue-darker);
+  border-color: var(--utfpr-link-blue-darker);
+}
+
+/* Ajuste para o Jumbotron na página inicial */
+.jumbotron {
+  background-color: transparent;
+  padding-top: 1rem; /* Reduz o preenchimento superior */
+  padding-bottom: 1rem; /* Opcional: ajusta o preenchimento inferior para simetria */
 }
