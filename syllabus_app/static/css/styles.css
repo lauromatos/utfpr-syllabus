@@ -1,8 +1,8 @@
 :root {
   --utfpr-header-yellow: #FFC933; /* Tom de amarelo ligeiramente mais claro */
-  --utfpr-highlight-yellow: #FFC220; /* Tom de destaque ligeiramente mais claro e intenso */
-  --utfpr-link-blue: #007eb1;
-  --utfpr-link-blue-darker: #006b96;
+  --utfpr-highlight-yellow: #FCBC00; /* Cor amarela do exemplo HTML */
+  --utfpr-link-blue: #005DB7; /* Cor azul do exemplo HTML */
+  --utfpr-link-blue-darker: #004C9A; /* Tom mais escuro do novo azul */
   --text-dark: #333333;
   --utfpr-very-light-yellow: #FFF9E6; /* Cor inspirada em dsYellow-50 */
   --text-light: #ffffff;
@@ -102,7 +102,43 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Ajuste para o Jumbotron na página inicial */
 .jumbotron {
-  background-color: transparent;
+  background-color: transparent; /* Remove o fundo cinza padrão do Bootstrap */
   padding-top: 1rem; /* Reduz o preenchimento superior */
   padding-bottom: 1rem; /* Opcional: ajusta o preenchimento inferior para simetria */
+}
+
+/* Botão customizado com outline azul e hover amarelo */
+.btn-custom-outline {
+  color: var(--utfpr-link-blue);
+  border-color: var(--utfpr-link-blue);
+  background-color: transparent;
+  border-style: solid;
+  border-width: 1px;
+  padding: 0.75rem 1rem; /* Equivalente a py-3 px-4 do Tailwind */
+  font-size: 14px; /* text-[14px] */
+  letter-spacing: 0.1em; /* tracking-widest (pode precisar de ajuste fino) */
+  border-radius: 0.5rem; /* rounded-lg */
+  cursor: pointer;
+  transition: color 0.3s ease-in-out, border-color 0.3s ease-in-out, background-color 0.3s ease-in-out; /* transition-all duration-300 ease-in-out */
+  text-decoration: none; /* Garante que não haja sublinhado de link */
+  display: inline-block; /* Para que padding e outras propriedades de bloco funcionem bem */
+  text-align: center;
+  vertical-align: middle;
+}
+
+.btn-custom-outline:hover {
+  color: var(--utfpr-highlight-yellow);
+  border-color: var(--utfpr-highlight-yellow);
+  background-color: transparent; /* Mantém transparente ou pode adicionar var(--utfpr-very-light-yellow) se desejar */
+  text-decoration: none; /* Garante que não haja sublinhado de link no hover */
+}
+
+/* Alinha rótulos e células de cabeçalho de formulário ao topo */
+form label {
+  vertical-align: top;
+}
+
+form th {
+  vertical-align: top;
+  padding-right: 10px; /* Adiciona espaço à direita do rótulo */
 }

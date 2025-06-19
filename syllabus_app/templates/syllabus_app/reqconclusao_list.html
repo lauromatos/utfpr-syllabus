@@ -1,21 +1,32 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-    <h1>Requisitos de Conclusão de Curso</h1>
+  <h1>Requisitos de Conclusão de Curso</h1>
 
-    {% if reqconclusao_list %}
-    <ul>
+  {% if perms.syllabus_app.add_reqconclusao %}
+    <p><a href="{% url 'reqconclusao-create' %}" class="btn btn-primary mb-3">Adicionar Novos Requisitos de Conclusão</a></p>
+  {% endif %}
 
-      {% for reqconclusao in reqconclusao_list %}
-      <li>
-        <a href="{{ reqconclusao.get_absolute_url }}">{{ reqconclusao }}</a>
-      </li>
+  {% if reqconclusao_list %}
+    <ul class="list-group">
+      {% for req in reqconclusao_list %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <span>
+            <strong>Curso:</strong> {{ req.nome_curso.nome_curso }} <br>
+            <small>
+              CH Total: {{ req.ch_total }}h |
+              Obrigatórias: {{ req.ch_obrigatorias }}h |
+              Optativas: {{ req.ch_optativas }}h |
+              Estágio: {{ req.ch_estagio }}h |
+              Extensionista: {{ req.ch_extensionista }}h
+            </small>
+          </span>
+          <a href="{% url 'reqconclusao-update' pk=req.pk %}" class="btn btn-secondary btn-sm">Alterar</a>
+        </li>
       {% endfor %}
-
     </ul>
+  {% else %}
+    <p>Não há requisitos de conclusão de curso cadastrados.</p>
+  {% endif %}
 
-    {% else %}
-      <p>Não existem Requisitos cadastrado no sistema.</p>
-    {% endif %}       
 {% endblock %}
-

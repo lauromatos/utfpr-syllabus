@@ -1,38 +1,37 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Conjunto: {{ conjuntodisciplinas.nome_conjunto }}</h1>
+    <div>
+      {% if perms.syllabus_app.change_conjuntodisciplinas %}
+        <a href="{% url 'conjuntodisciplinas-update' pk=conjuntodisciplinas.pk %}" class="btn btn-secondary btn-sm">Alterar Conjunto</a>
+      {% endif %}
+      {% if perms.syllabus_app.delete_conjuntodisciplinas %}
+        <a href="{% url 'conjuntodisciplinas-delete' pk=conjuntodisciplinas.pk %}" class="btn btn-danger btn-sm ml-1">Excluir Conjunto</a>
+      {% endif %}
+    </div>
+  </div>
 
-<h1>Conjunto de Disciplinas: {{ conjuntodisciplinas.nome_conjunto }}</h1>
+  <p><strong>Código do Conjunto (Optativa):</strong> {{ conjuntodisciplinas.cod_optativa }}</p>
+  <p><strong>Carga Horária Obrigatória do Conjunto:</strong> {{ conjuntodisciplinas.ch_obrigatoria }} horas</p>
 
-<div style="margin-left:20px;margin-top:20px">
-<h4>Disciplinas Cadastradas nesse Conjunto</h4>
-
-<ul>
-  {% for nome_disciplina in conjuntodisciplinas.cod_optativa_set.all %}
-  <li>
-    <a href="{{ disciplina.get_absolute_url }}">{{ disciplina.nome_disciplina }}</a>
-  </li>
-  {% empty %}
-  <li>Não existem Disciplinas cadastradas nesse Conjunto.</li>
-  {% endfor %}
-</ul>
-
-{% endblock %}
-
-
-{% block sidebar %}
-  {{ block.super }}
-
-  {% if perms.syllabus_app.change_conjuntodisciplinas or perms.syllabus_app.delete_conjuntodisciplinas %}
   <hr>
-  <ul class="sidebar-nav">
-    {% if perms.syllabus_app.conjuntodisciplinas %}
-    <li><a href="{% url 'conjuntodisciplinas-update' conjuntodisciplinas.id %}">Atualizar Conjunto de Disciplinas</a></li>
+  <h4>Disciplinas Optativas neste Conjunto</h4>
+  {% with conjuntodisciplinas.disciplina_set.all as disciplinas_do_conjunto %}
+    {% if disciplinas_do_conjunto %}
+      <ul class="list-group">
+        {% for disciplina in disciplinas_do_conjunto %}
+          <li class="list-group-item">
+            <a href="{{ disciplina.get_absolute_url }}">{{ disciplina.nome_disciplina }}</a> ({{ disciplina.cod_disciplina }}) - Carga Horária: {{ disciplina.carga_horaria }}h
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>Nenhuma disciplina optativa cadastrada para este conjunto.</p>
     {% endif %}
-    {% if not cod_optativa.conjuntodisciplinas_set.all and perms.syllabus_app.conjuntodisciplinas %}
-      <li><a href="{% url 'conjuntodisciplinas-delete' conjuntodisciplinas.id %}">Excluir Conjunto de Disciplinas</a></li>
-    {% endif %}
-    </ul>
-  {% endif %}
+  {% endwith %}
+
+  <p class="mt-3"><a href="{% url 'conjuntodisciplinas' %}" class="btn btn-outline-primary">Voltar para Lista de Conjuntos</a></p>
 
 {% endblock %}

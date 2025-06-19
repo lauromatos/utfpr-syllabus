@@ -3,21 +3,30 @@
 {% block content %}
 
 <h1>Lista de Disciplinas</h1>
+{% if perms.syllabus_app.add_disciplina %}
+  <p><a href="{% url 'disciplina-create' %}" class="btn btn-primary mb-3">Adicionar Nova Disciplina</a></p>
+{% endif %}
 
 {% if disciplina_list %}
-  <ul>
-
+  <ul class="list-group">
   {% for disciplina in disciplina_list %}
-    <li>
-      <a href="{{ disciplina.get_absolute_url }}">{{ disciplina }}</a>
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <span>
+        <a href="{{ disciplina.get_absolute_url }}">{{ disciplina }}</a>
+      </span>
+      <div>
+        {% if perms.syllabus_app.change_disciplina %}
+          <a href="{% url 'disciplina-update' pk=disciplina.pk %}" class="btn btn-secondary btn-sm">Alterar</a>
+        {% endif %}
+        {% if perms.syllabus_app.delete_disciplina %}
+          <a href="{% url 'disciplina-delete' pk=disciplina.pk %}" class="btn btn-danger btn-sm ml-1">Excluir</a>
+        {% endif %}
+      </div>
     </li>
   {% endfor %}
-
  </ul>
 {% else %}
   <p>Não existem Disciplinas cadastrados.</p>
 {% endif %}
 
-
 {% endblock %}
-

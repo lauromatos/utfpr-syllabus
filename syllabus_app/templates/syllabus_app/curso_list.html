@@ -2,20 +2,29 @@
 
 {% block content %}
     <h1>Lista de Cursos</h1>
+    {% if perms.syllabus_app.add_curso %}
+      <p><a href="{% url 'curso-create' %}" class="btn btn-primary mb-3">Adicionar Novo Curso</a></p>
+    {% endif %}
 
     {% if curso_list %}
-    <ul>
-
+    <ul class="list-group">
       {% for curso in curso_list %}
-      <li>
-        <a href="{{ curso.get_absolute_url }}">{{ curso.nome_curso }}</a> ({{curso.departamento}})
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <span>
+          <a href="{{ curso.get_absolute_url }}">{{ curso.nome_curso }}</a> ({{ curso.departamento }})
+        </span>
+        <div>
+          {% if perms.syllabus_app.change_curso %}
+            <a href="{% url 'curso-update' pk=curso.pk %}" class="btn btn-secondary btn-sm">Alterar</a>
+          {% endif %}
+          {% if perms.syllabus_app.delete_curso %}
+            <a href="{% url 'curso-delete' pk=curso.pk %}" class="btn btn-danger btn-sm ml-1">Excluir</a>
+          {% endif %}
+        </div>
       </li>
       {% endfor %}
-
     </ul>
-
     {% else %}
       <p>Não existe Curso cadastrado no sistema.</p>
     {% endif %}       
 {% endblock %}
-

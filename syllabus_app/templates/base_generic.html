@@ -48,25 +48,10 @@
           <ul class="sidebar-nav nav flex-column">
             <li class="nav-item">Administrativo</li>
             <li class="nav-item"><a class="nav-link" href="{% url 'departamento' %}">Departamentos</a></li>
-            {% if perms.syllabus_app.add_departamento %}
-              <li class="nav-item"><a class="nav-link" href="{% url 'departamento-create' %}">Adicionar Departamento</a></li>
-            {% endif %}
-            <li class="nav-item"><a class="nav-link" href="{% url 'curso' %}">Cursos</a></li>
-            {% if perms.syllabus_app.add_curso %}
-              <li class="nav-item"><a class="nav-link" href="{% url 'curso-create' %}">Adicionar Curso</a></li>
-            {% endif %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'curso' %}">Cursos</a></li>            
             <li class="nav-item"><a class="nav-link" href="{% url 'conjuntodisciplinas' %}">Conjunto de Disciplinas</a></li>
-            {% if perms.syllabus_app.add_conjuntodisciplinas %}
-              <li class="nav-item"><a class="nav-link" href="{% url 'conjuntodisciplinas-create' %}">Adicionar Conjunto de Disciplinas</a></li>
-            {% endif %}
             <li class="nav-item"><a class="nav-link" href="{% url 'disciplina' %}">Disciplinas</a></li>
-            {% if perms.syllabus_app.add_disciplina %}
-              <li class="nav-item"><a class="nav-link" href="{% url 'disciplina-create' %}">Adicionar Disciplina</a></li>
-            {% endif %}
             <li class="nav-item"><a class="nav-link" href="{% url 'reqconclusao' %}">Requisitos de Conclusão</a></li>
-            {% if perms.syllabus_app.add_reqconclusao %}
-              <li class="nav-item"><a class="nav-link" href="{% url 'reqconclusao-create' %}">Adicionar Requisitos de Conclusão</a></li>
-            {% endif %}
           </ul>
           {% endif %}
           {% endblock %}

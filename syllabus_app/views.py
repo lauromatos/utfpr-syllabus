@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from syllabus_app.models import Aluno, Departamento, Curso, ConjuntoDisciplinas, Disciplina, DisciplinasCursadas, ReqConclusao
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login # type: ignore
-from .forms import UserRegistrationForm
+from .forms import UserRegistrationForm, ReqConclusaoForm
 from django.core.exceptions import PermissionDenied
 
 
@@ -159,12 +159,14 @@ class DisciplinaCreate(PermissionRequiredMixin, CreateView):
     model = Disciplina
     fields = ['cod_disciplina', 'nome_disciplina', 'Departamento', 'carga_horaria',
               'obrigatoria', 'cod_optativa', 'periodo', 'extensionista']
+    success_url = reverse_lazy('disciplina')
     permission_required = 'syllabus_app.add_disciplina'
 
 class DisciplinaUpdate(PermissionRequiredMixin, UpdateView):
     model = Disciplina
     fields = ['cod_disciplina', 'nome_disciplina', 'Departamento', 'carga_horaria',
               'obrigatoria', 'cod_optativa', 'periodo', 'extensionista']
+    success_url = reverse_lazy('disciplina')
     permission_required = 'syllabus_app.change_disciplina'
 
 class DisciplinaDelete(PermissionRequiredMixin, DeleteView):
@@ -185,11 +187,13 @@ class DisciplinaDelete(PermissionRequiredMixin, DeleteView):
 class CursoCreate(PermissionRequiredMixin, CreateView):
     model = Curso
     fields = ['nome_curso', 'departamento']
+    success_url = reverse_lazy('curso')
     permission_required = 'syllabus_app.add_curso'
 
 class CursoUpdate(PermissionRequiredMixin, UpdateView):
     model = Curso
     fields = ['nome_curso', 'departamento']
+    success_url = reverse_lazy('curso')
     permission_required = 'syllabus_app.change_curso'
 
 class CursoDelete(PermissionRequiredMixin, DeleteView):
@@ -212,12 +216,14 @@ class DepartamentoCreate(PermissionRequiredMixin, CreateView):
     model = Departamento
     fields = ['departamento', 'nome_departamento']
     permission_required = 'syllabus_app.add_departamento'
+    success_url = reverse_lazy('departamento') # Redireciona para a lista de departamentos após a criação
 
 
 class DepartamentoUpdate(PermissionRequiredMixin, UpdateView):
     model = Departamento
     fields = ['departamento', 'nome_departamento']
     permission_required = 'syllabus_app.change_departamento'
+    success_url = reverse_lazy('departamento') # Redireciona para a lista de departamentos após a atualização
 
 
 class DepartamentoDelete(PermissionRequiredMixin, DeleteView):
@@ -239,12 +245,14 @@ class DepartamentoDelete(PermissionRequiredMixin, DeleteView):
 class ConjuntoDisciplinasCreate(PermissionRequiredMixin, CreateView):
     model = ConjuntoDisciplinas
     fields = ['cod_optativa', 'nome_conjunto', 'ch_obrigatoria']
+    success_url = reverse_lazy('conjuntodisciplinas')
     permission_required = 'syllabus_app.add_conjuntodisciplinas'
 
 
 class ConjuntoDisciplinasUpdate(PermissionRequiredMixin, UpdateView):
     model = ConjuntoDisciplinas
     fields = ['cod_optativa', 'nome_conjunto', 'ch_obrigatoria']
+    success_url = reverse_lazy('conjuntodisciplinas')
     permission_required = 'syllabus_app.change_conjuntodisciplinas'
 
 
@@ -266,14 +274,16 @@ class ConjuntoDisciplinasDelete(PermissionRequiredMixin, DeleteView):
 
 class ReqConclusaoCreate(PermissionRequiredMixin, CreateView):
     model = ReqConclusao
-    fields = ['nome_curso', 'ch_total', 'ch_obrigatorias', 'ch_optativas', 'ch_estagio']
+    form_class = ReqConclusaoForm
+    success_url = reverse_lazy('reqconclusao')
     permission_required = 'syllabus_app.add_reqconclusao'
 
 
 class ReqConclusaoUpdate(PermissionRequiredMixin, UpdateView):
     model = ReqConclusao
-    fields = ['nome_curso', 'ch_total', 'ch_obrigatorias', 'ch_optativas', 'ch_estagio']
+    form_class = ReqConclusaoForm
     permission_required = 'syllabus_app.change_reqconclusao'
+    success_url = reverse_lazy('reqconclusao') # Redireciona para a lista após a atualização
 
 
 class ReqConclusaoDelete(PermissionRequiredMixin, DeleteView):

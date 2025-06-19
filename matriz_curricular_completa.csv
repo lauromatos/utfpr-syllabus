@@ -1,0 +1,124 @@
+Código da unidade curricular,Nome da unidade curricular,Departamento,Carga horária total da unidade curricular (h),Obrigatoria,Cod optativa,Periodo,Unidade com carga horária totalmente extensionista
+MAT7PC,Pré-Cálculo,DAELN,60,Sim,Disciplinas Obrigatórias,Primeiro,Não
+ELE13,Redes,DAELN,45,Sim,Disciplinas Obrigatórias,Primeiro,Não
+ELN81A,Eletricidade,DAELN,75,Sim,Disciplinas Obrigatórias,Primeiro,Não
+ELB11,Algoritmos de Programação,DAELN,45,Sim,Disciplinas Obrigatórias,Primeiro,Não
+ELN81B,Introdução a Práticas de Eletrônica com Microcontroladores Modernos,DAELN,75,Sim,Disciplinas Obrigatórias,Primeiro,Não
+ELN81C,Introdução a Sistemas de Telecomunicações,DAELN,45,Sim,Disciplinas Obrigatórias,Primeiro,Não
+COE70A,Comunicação Oral e Escrita,DALIC,30,Sim,Disciplinas Obrigatórias,Primeiro,Não
+ELN82A,Cálculo para Telecomunicações,DAELN,60,Sim,Disciplinas Obrigatórias,Segundo,Não
+ELE14,Redes 2,DAELN,60,Sim,Disciplinas Obrigatórias,Segundo,Não
+ELN82B,Linhas de Transmissão,DAELN,75,Sim,Disciplinas Obrigatórias,Segundo,Não
+ELB21,Programação de Computador,DAELN,60,Sim,Disciplinas Obrigatórias,Segundo,Não
+ELN82C,Redes Convergentes e Redes Legadas,DAELN,60,Sim,Disciplinas Obrigatórias,Segundo,Não
+ELN82D,Frameworks de Gestão de Serviços,DAELN,45,Sim,Disciplinas Obrigatórias,Segundo,Não
+EST70B,Noções de Estatística,DAEST,30,Sim,Disciplinas Obrigatórias,Terceiro,Não
+ELN83A,Segurança de Redes,DAELN,60,Sim,Disciplinas Obrigatórias,Terceiro,Não
+ELN83B,Comunicações Digitais,DAELN,90,Sim,Disciplinas Obrigatórias,Terceiro,Não
+ELN83C,Comunicações Sem Fio,DAELN,90,Sim,Disciplinas Obrigatórias,Terceiro,Não
+ELN84A,Redes sem fio,DAELN,60,Sim,Disciplinas Obrigatórias,Quarto,Não
+ELN84B,Radiopropagação e Antenas,DAELN,90,Sim,Disciplinas Obrigatórias,Quarto,Não
+ELN84C,Teoria da Informação,DAELN,60,Sim,Disciplinas Obrigatórias,Quarto,Não
+GEE70S,Gestão da Tecnologia e Inovação,DAELN,30,Sim,Disciplinas Obrigatórias,Quarto,Não
+ELN84D,Projeto Integrador,DAELN,60,Sim,Disciplinas Obrigatórias,Quarto,Não
+ELN85A,Laboratório de Integração de Redes e Serviços,DAELN,75,Sim,Disciplinas Obrigatórias,Quinto,Não
+ELN85B,Gerência de Redes,DAELN,75,Sim,Disciplinas Obrigatórias,Quinto,Não
+ELN85C,Redes Móveis: LTE, 4G, 5G,DAELN,60,Sim,Disciplinas Obrigatórias,Quinto,Não
+GEE7G6,Fundamentos de Gestão de Projetos,DAELN,45,Sim,Disciplinas Obrigatórias,Quinto,Não
+CAART01,TÓPICOS EM MÚSICA E TECNOLOGIA: HISTÓRIA DO JAZZ,DAELN,30,Não,Ciclo de Humanidades,2,Sim
+CAART02,PRÁTICA MUSICAL E INTERAÇÕES HUMANAS: APRENDIZADO COLETIVO DE VIOLINO, VIOLA ERUDITA, VIOLONCELO E CONTRABAIXO ACÚSTICO 1,DAELN,60,Não,Ciclo de Humanidades,2,Sim
+CAART03,PRÁTICA MUSICAL E INTERAÇÕES HUMANAS: APRENDIZADO COLETIVO DE VIOLINO, VIOLA ERUDITA, VIOLONCELO E CONTRABAIXO ACÚSTICO 2,DAELN,60,Não,Ciclo de Humanidades,2,Sim
+CAART04,PRÁTICA ARTÍSTICA MUSICAL: GRUPOS INSTRUMENTAIS 1,DAELN,90,Não,Ciclo de Humanidades,2,Sim
+CAART05,PRÁTICA ARTÍSTICA MUSIAL: GRUPOS INSTRUMENTAIS 2,DAELN,90,Não,Ciclo de Humanidades,2,Sim
+CAART06,PRÁTICA ARTÍSTICA MUSICAL: GRUPOS INSTRUMENTAIS 3,DAELN,90,Não,Ciclo de Humanidades,2,Sim
+CAART07,PRÁTICA ARTÍSTICA MUSICAL: GRUPOS INSTRUMENTAIS 4,DAELN,90,Não,Ciclo de Humanidades,2,Sim
+CAART08,INTRODUÇÃO NA PRÁTICA DE CANTO, TEORIA E SOLFEJO MUSICAL 1,DAELN,60,Não,Ciclo de Humanidades,2,Sim
+CAART09,INTROCUÇÃO NA PRÁTICA DE CANTO, TEORIA E SOLFEJO MUSICAL 2,DAELN,60,Não,Ciclo de Humanidades,2,Sim
+CAART10,PRÁTICAS DE VIOLÃO POPULAR E MPB 1,DAELN,90,Não,Ciclo de Humanidades,2,Sim
+CAART11,PRÁTICAS DE VIOLÃO POPULAR E MPB 2,DAELN,90,Não,Ciclo de Humanidades,2,Sim
+CAART12,CANTO CORAL 1,DAELN,120,Não,Ciclo de Humanidades,2,Sim
+CAART13,CANTO CORAL 2,DAELN,120,Não,Ciclo de Humanidades,2,Sim
+CAART14,CANTO CORAL 3,DAELN,120,Não,Ciclo de Humanidades,2,Sim
+CAART15,CANTO CORAL 4,DAELN,120,Não,Ciclo de Humanidades,2,Sim
+CAART16,TÉCNICA VOCAL E AFINAÇÃO,DAELN,120,Não,Ciclo de Humanidades,2,Sim
+CAART17,CANTO, FONÉTICA E FONOLOGIA,DAELN,120,Não,Ciclo de Humanidades,2,Sim
+CAART21,TÓPICOS EM PENSAMENTO COMPUTACIONAL E MÚSICA,DAELN,120,Não,Ciclo de Humanidades,2,Sim
+CAART22,COMPUTAÇÃO MUSICAL,DAELN,120,Não,Ciclo de Humanidades,2,Sim
+CAART23,CRIATIVIDADE E PROCESSOS CRIATIVOS,DAELN,120,Não,Ciclo de Humanidades,2,Sim
+CAART24,TECNOLOGIA DA INFORMAÇÃO E COMUNICAÇÃO NA EDUCAÇÃO,DAELN,120,Não,Ciclo de Humanidades,2,Sim
+CAART25,PROJETOS STEAM (SCIENCE, TECHNOLOGY, ENGINEERING, ARTS, MATHEMATICS),DAELN,120,Não,Ciclo de Humanidades,2,Sim
+,Conceitos Ambientais Aplicados às TDICs,DAELN,90,Não,Ciclo de Humanidades,2,Sim
+EDU70J,LIBRAS,DEPED,45,Não,Ciclo de Humanidades,2,Não
+ELH01,FUNDAMENTOS DE PRIMEIROS SOCORROS,DAELN,30,Não,Ciclo de Humanidades,2,Não
+ELH02,PRÁTICA DE GRUPO E INTERAÇÕES HUMANAS COM A MÚSICA,DAELN,30,Não,Ciclo de Humanidades,2,Não
+ELH04,INOVAÇÃO TECNOLÓGICA E FINANCIAMENTO,DAELN,60,Não,Ciclo de Humanidades,2,Não
+ELH05,NOÇÕES JURÍDICAS PARA EMPREENDEDORES,DAELN,60,Não,Ciclo de Humanidades,2,Não
+ELH06,METODOLOGIAS ATIVAS PARA A EDUCAÇÃO EM ENGENHARIA,DAELN,30,Não,Ciclo de Humanidades,2,Não
+ELH11,ESPANHOL PARA ENGENHARIAS I,DEPED,45,Não,Ciclo de Humanidades,2,Não
+ELH12,ESPANHOL PARA ENGENHARIAS II,DEPED,45,Não,Ciclo de Humanidades,2,Não
+ELH13,PRÁTICA DE ESCRITA PARA ENGENHARIAS,DEPED,60,Não,Ciclo de Humanidades,2,Não
+ELN8AA,PROGRAMAÇÃO AVANÇADA,DAELN,75,Não,Trilha em Computação,2,Não
+ELN8AB,COMPUTAÇÃO EM NUVEM,DAELN,60,Não,Trilha em Computação,2,Não
+ELN8AC,FUNDAMENTOS DO DESENVOLVIMENTO PARA WEB,DAELN,60,Não,Trilha em Computação,2,Não
+ELP41,ELETRÔNICA ANALÓGICA 1: MATERIAIS SEMICONDUTORES,DAELN,60,Não,Trilha em Eletrônica para Comunicação,2,Não
+ELB66,SINAIS E SISTEMAS,DAELN,90,Não,Trilha em Eletrônica para Comunicação,2,Não
+ELF41,CIRCUITOS DIGITAIS,DAELN,75,Não,Trilha em Eletrônica para Comunicação,2,Não
+ELF52,SISTEMAS MICROCONTROLADOS,DAELN,60,Não,Trilha em Eletrônica para Comunicação,2,Não
+ELTE3,LÓGICA RECONFIGURÁVEL,DAELN,60,Não,Trilha em Eletrônica para Comunicação,2,Não
+ELN8BA,CIÊNCIA DE DADOS,DAELN,60,Não,Trilha em Sistemas Inteligentes,2,Não
+ELN8BB,BIG DATA E APLICAÇÕES,DAELN,45,Não,Trilha em Sistemas Inteligentes,2,Não
+ELN8BC,CIDADES INTELIGENTES E INOVADORAS,DAELN,45,Não,Trilha em Sistemas Inteligentes,2,Não
+ELN8CA,LINUX BÁSICO,DAELN,60,Não,Trilha em Sistemas Operacionais,2,Não
+ELN8CB,VIRTUALIZAÇÃO,DAELN,60,Não,Trilha em Sistemas Operacionais,2,Não
+ELN8CC,PRÁTICAS DE DESENVOLVIMENTO PARA LINUX AVANÇADO,DAELN,90,Não,Trilha em Sistemas Operacionais,2,Sim
+ELN8DA,ARQUITETURA E ORGANIZAÇÃO DE COMPUTADORES,DAELN,60,Não,Optativas Isoladas,2,Não
+ELN8DB,CABEAMENTO ESTRUTURADO,DAELN,60,Não,Optativas Isoladas,2,Não
+ICSB30,INTRODUÇÃO A BANCO DE DADOS,DAINF,60,Não,Optativas Isoladas,2,Não
+ELP73,PRINCÍPIOS DE COMUNICAÇÕES,DAELN,60,Não,Optativas Isoladas,2,Não
+ELN8DC,SEGURANÇA DA INFORMAÇÃO: INTRODUÇÃO, NORMAS E PADRÕES,DAELN,90,Não,Optativas Isoladas,2,Não
+ELTB6,TÓPICOS AVANÇADOS EM COMUNICAÇÕES,DAELN,60,Não,Optativas Isoladas,2,Não
+ELTB1,SISTEMAS DE COMUNICAÇÃO,DAELN,60,Não,Optativas Isoladas,2,Não
+ELN8DD,EMPREENDEDORISMO,DAELN,30,Não,Optativas Isoladas,2,Não
+ELN8DE,SISTEMAS INTEGRADOS DE GESTÃO,DAELN,45,Não,Optativas Isoladas,2,Não
+ELN8DF,TELEFONIA,DAELN,60,Não,Optativas Isoladas,2,Não
+ELN8DG,CABEAMENTO ESTRUTURADO NA PRÁTICA,DAELN,105,Não,Optativas Isoladas,2,Sim
+ELN8DH,SEGURANÇA DA INFORMAÇÃO NA PRÁTICA,DAELN,120,Não,Optativas Isoladas,2,Sim
+ELSP01,SMART PROJECTS,DAELN,120,Não,Optativas Isoladas,2,Sim
+ELSC01,SMART CHALLENGES,DAELN,120,Não,Optativas Isoladas,2,Sim
+ENADE I-T,ENADE INGRESSANTE,DAELN,0,Não,Optativas Profissionalizantes,1,Não
+ELT81C,INTRODUÇÃO À TECNOLOGIA EM AUTOMAÇÃO,DAELT,60,Não,Trilha em Automação Industrial,2,Não
+ELT85B,INTERNET DAS COISAS INDUSTRIAL (IIoT),DAELT,60,Não,Trilha em Automação Industrial,2,Não
+ELT85C,REDES INDUSTRIAIS APLICADAS,DAELT,45,Não,Trilha em Automação Industrial,2,Não
+GEE7A1,FUNDAMENTOS DE ADMINISTRAÇÃO,DAGEE,45,Não,Ciclo de Humanidades,2,Não
+GEE7E3,FUNDAMENTOS DE ECONOMIA,DAGEE,30,Não,Ciclo de Humanidades,2,Não
+GEE7E5,FUNDAMENTOS DE ENGENHARIA ECONÔMICA E ANÁLISE DE VIABILIDADE,DAGEE,60,Não,Ciclo de Humanidades,2,Não
+GEE7F1,FUNDAMENTOS DE FINANÇAS,DAGEE,60,Não,Ciclo de Humanidades,2,Não
+GEE7G1,FUNDAMENTOS DE GESTÃO DE PESSOAS,DAGEE,45,Não,Ciclo de Humanidades,2,Não
+GEE7G3,FUNDAMENTOS DE GESTÃO DA PRODUÇÃO,DAGEE,45,Não,Ciclo de Humanidades,2,Não
+GEE7M1,FUNDAMENTOS DE MARKETING,DAGEE,45,Não,Ciclo de Humanidades,2,Não
+ICSI30,SISTEMAS INTELIGENTES,DAINF,45,Não,Trilha em Sistemas Inteligentes,2,Não
+ICSI31,CIÊNCIA DAS REDES,DAINF,60,Não,Trilha em Sistemas Inteligentes,2,Não
+ICSI41,REDES NEURAIS,DAINF,45,Não,Trilha em Sistemas Inteligentes,2,Não
+ICSI50,INTELIGÊNCIA ARTIFICIAL,DAINF,45,Não,Trilha em Sistemas Inteligentes,2,Não
+ICSI51,COMPUTAÇÃO EVOLUCIONÁRIA,DAINF,45,Não,Trilha em Sistemas Inteligentes,2,Não
+ICSI52,INTELIGÊNCIA ARTIFICIAL DISTRIBUÍDA,DAINF,45,Não,Trilha em Sistemas Inteligentes,2,Não
+ICSI53,MINERAÇÃO DE DADOS,DAINF,45,Não,Trilha em Sistemas Inteligentes,2,Não
+ICSI54,GRAFOS DE CONHECIMENTO,DAINF,45,Não,Trilha em Sistemas Inteligentes,2,Não
+ICSI55,SISTEMAS AUTÔNOMOS INTELIGENTES,DAINF,45,Não,Trilha em Sistemas Inteligentes,2,Não
+ICSI56,SISTEMAS FUZZY,DAINF,45,Não,Trilha em Sistemas Inteligentes,2,Não
+ICSI57,INTRODUÇÃO ÀS CIÊNCIAS COGNITIVAS,DAINF,45,Não,Trilha em Sistemas Inteligentes,2,Não
+ICSI58,DATA MINING,DAINF,45,Não,Trilha em Sistemas Inteligentes,2,Não
+ICSI59,PROGRAMAÇÃO ORIENTADA À NOTIFICAÇÕES,DAINF,45,Não,Trilha em Sistemas Inteligentes,2,Não
+ICSIX0,INTELIGÊNCIA ARTIFICIAL E SOCIEDADE,DAINF,60,Não,Trilha em Sistemas Inteligentes,2,Não
+LEM7A1,ALEMÃO 1,DALEM,60,Não,Ciclo de Humanidades,2,Não
+LEM7A2,ALEMÃO 2,DALEM,60,Não,Ciclo de Humanidades,2,Não
+LEM7A3,ALEMÃO 3,DALEM,60,Não,Ciclo de Humanidades,2,Não
+LEM7A4,ALEMÃO 4,DALEM,60,Não,Ciclo de Humanidades,2,Não
+LEM7A5,ALEMÃO 5,DALEM,60,Não,Ciclo de Humanidades,2,Não
+LEM7A6,ALEMÃO PARA FINS ACADÊMICOS,DALEM,30,Não,Ciclo de Humanidades,2,Não
+LEM7F1,FRANCÊS 1,DALEM,60,Não,Ciclo de Humanidades,2,Não
+LEM7F2,FRANCÊS 2,DALEM,60,Não,Ciclo de Humanidades,2,Não
+LEM7F3,FRANCÊS 3,DALEM,60,Não,Ciclo de Humanidades,2,Não
+LEM7F4,FRANCÊS 4,DALEM,60,Não,Ciclo de Humanidades,2,Não
+LEM7F5,FRANCÊS 5,DALEM,60,Não,Ciclo de Humanidades,2,Não
+LEM7PF,PENSADORES FRANCESES DA TECNOLOGIA E DA EDUCAÇÃO,DALEM,30,Não,Ciclo de Humanidades,2,Não

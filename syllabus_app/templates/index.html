@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="jumbotron">
-  <h1 class="display-5">Bem-vindos ao Sistema UTFPR Syllabus!</h1>
+  <h1 class="display-5">Bem-vindo ao Sistema UTFPR Syllabus!</h1>
   <p class="lead">Aqui você pode consultar cursos, disciplinas e progresso acadêmico.</p>
   <hr class="my-4">
   <p>O sistema contém os seguintes dados:</p>
@@ -15,6 +15,6 @@
   <p>
     Você visitou essa página {{ num_visits }}{% if num_visits == 1 %} vez{% else %} vezes{% endif %}.
   </p>
-  <a class="btn btn-primary btn-lg" href="{% url 'disciplinascursadas' %}" role="button">Disciplinas Cursadas</a>
+  <a class="btn btn-custom-outline btn-lg" href="{% url 'disciplinascursadas' %}" role="button">Disciplinas Cursadas</a>
 </div>
 {% endblock %}

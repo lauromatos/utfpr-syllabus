@@ -27,6 +27,9 @@ class Departamento(models.Model):
     class Meta:
         ordering = ['departamento', 'nome_departamento']
 
+    def get_absolute_url(self):
+        return reverse('departamento-detail', args=[str(self.id)])
+
 
     def __str__(self):
         return f'{self.departamento} - {self.nome_departamento}'
@@ -35,6 +38,9 @@ class Departamento(models.Model):
 class Curso(models.Model):
     nome_curso = models.CharField(max_length=45, help_text='Digite o nome do curso')
     departamento = models.ForeignKey('Departamento', on_delete=models.SET_NULL, null=True, help_text='Selecione o Departamento')
+
+    def get_absolute_url(self):
+        return reverse('curso-detail', args=[str(self.id)])
 
     def __str__(self):
         return self.nome_curso
@@ -47,6 +53,8 @@ class ConjuntoDisciplinas(models.Model):
     class Meta:
         ordering = ['cod_optativa', 'nome_conjunto']
 
+    def get_absolute_url(self):
+        return reverse('conjuntodisciplinas-detail', args=[str(self.id)])
 
     def __str__(self):
         return f'{self.cod_optativa} - {self.nome_conjunto}'
@@ -63,6 +71,9 @@ class Disciplina(models.Model):
 
     class Meta:
         ordering = ['cod_disciplina', 'nome_disciplina']
+
+    def get_absolute_url(self):
+        return reverse('disciplina-detail', args=[str(self.id)])
 
     def __str__(self):
         return f'{self.cod_disciplina} - {self.nome_disciplina}'
@@ -84,9 +95,10 @@ class ReqConclusao(models.Model):
     ch_obrigatorias = models.SmallIntegerField()
     ch_optativas = models.SmallIntegerField()
     ch_estagio = models.SmallIntegerField()
+    ch_extensionista = models.SmallIntegerField(default=0, blank=True, help_text='Carga horária mínima de atividades extensionistas')
 
     class Meta:
-        ordering = ['nome_curso', 'ch_total', 'ch_obrigatorias', 'ch_optativas', 'ch_estagio']
+        ordering = ['nome_curso', 'ch_total', 'ch_obrigatorias', 'ch_optativas', 'ch_estagio', 'ch_extensionista']
 
     def __str__(self):
-        return f'{self.nome_curso} - {self.ch_total} - {self.ch_obrigatorias} - {self.ch_optativas} - {self.ch_estagio}'
+        return f'{self.nome_curso} - Total: {self.ch_total}h'

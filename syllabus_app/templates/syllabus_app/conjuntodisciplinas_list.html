@@ -2,22 +2,31 @@
 
 {% block content %}
 
-<h1>Lista de Conjunto de Disciplinas</h1>
+<h1>Lista de Conjuntos de Disciplinas</h1>
+{% if perms.syllabus_app.add_conjuntodisciplinas %}
+  <p><a href="{% url 'conjuntodisciplinas-create' %}" class="btn btn-primary mb-3">Adicionar Novo Conjunto de Disciplinas</a></p>
+{% endif %}
 
 {% if conjuntodisciplinas_list %}
-  <ul>
-
+  <ul class="list-group">
   {% for conjuntodisciplinas in conjuntodisciplinas_list %}
-    <li>
-      <a href="{{ conjuntodisciplinas.get_absolute_url }}">{{ conjuntodisciplinas }}</a>
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <span>
+        <a href="{{ conjuntodisciplinas.get_absolute_url }}">{{ conjuntodisciplinas }}</a> ({{ conjuntodisciplinas.disciplina_set.all|length }} disciplina(s))
+      </span>
+      <div>
+        {% if perms.syllabus_app.change_conjuntodisciplinas %}
+          <a href="{% url 'conjuntodisciplinas-update' pk=conjuntodisciplinas.pk %}" class="btn btn-secondary btn-sm">Alterar</a>
+        {% endif %}
+        {% if perms.syllabus_app.delete_conjuntodisciplinas %}
+          <a href="{% url 'conjuntodisciplinas-delete' pk=conjuntodisciplinas.pk %}" class="btn btn-danger btn-sm ml-1">Excluir</a>
+        {% endif %}
+      </div>
     </li>
   {% endfor %}
-
  </ul>
 {% else %}
   <p>Não existem Conjunto de Disciplinas cadastrados.</p>
 {% endif %}
 
-
 {% endblock %}
-

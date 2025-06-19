@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Aluno, Curso, DisciplinasCursadas, Disciplina
+from .models import Aluno, Curso, DisciplinasCursadas, Disciplina, ReqConclusao
 from django.core.exceptions import ValidationError
 
 class UserRegistrationForm(forms.Form):
@@ -54,3 +54,22 @@ class AlunoAdicionaDisciplinaForm(forms.ModelForm):
             if DisciplinasCursadas.objects.filter(ra_aluno=self.user, cod_disciplina=disciplina).exists():
                 raise forms.ValidationError('Você já cadastrou esta disciplina.')
         return disciplina
+
+
+class BlankZeroInput(forms.NumberInput):
+    def format_value(self, value):
+        if value == 0 or value is None: # Se o valor for 0 ou None
+            return '' # Exibe como vazio no template
+        return super().format_value(value)
+
+class ReqConclusaoForm(forms.ModelForm):
+    class Meta:
+        model = ReqConclusao
+        fields = ['nome_curso', 'ch_total', 'ch_obrigatorias', 'ch_optativas', 'ch_estagio', 'ch_extensionista']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['ch_extensionista'].widget = BlankZeroInput()
+        # Como ch_extensionista tem blank=True no modelo, o campo do formulário terá required=False.
+        # Se o usuário submeter vazio (o widget renderizou ''), ele será validado como None.
+        # Ao salvar, o default=0 do modelo será aplicado se o valor for None.

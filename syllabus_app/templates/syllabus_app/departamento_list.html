@@ -3,21 +3,30 @@
 {% block content %}
 
 <h1>Lista de Departamentos</h1>
+{% if perms.syllabus_app.add_departamento %}
+  <p><a href="{% url 'departamento-create' %}" class="btn btn-primary mb-3">Adicionar Novo Departamento</a></p>
+{% endif %}
 
 {% if departamento_list %}
-  <ul>
-
-  {% for departamento in departamento_list %}
-    <li>
-      <a href="{{ departamento.get_absolute_url }}">{{ departamento.departamento }}</a> ({{departamento.nome_departamento}})
-    </li>
-  {% endfor %}
-
- </ul>
+  <ul class="list-group">
+    {% for departamento in departamento_list %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <span>
+          <a href="{{ departamento.get_absolute_url }}">{{ departamento.departamento }}</a> - {{ departamento.nome_departamento }}
+        </span>
+        <div>
+          {% if perms.syllabus_app.change_departamento %}
+            <a href="{% url 'departamento-update' pk=departamento.pk %}" class="btn btn-secondary btn-sm">Alterar</a>
+          {% endif %}
+          {% if perms.syllabus_app.delete_departamento %}
+            <a href="{% url 'departamento-delete' pk=departamento.pk %}" class="btn btn-danger btn-sm ml-1">Excluir</a>
+          {% endif %}
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
 {% else %}
   <p>Não existem Departamentos cadastrados.</p>
 {% endif %}
 
-
 {% endblock %}
-

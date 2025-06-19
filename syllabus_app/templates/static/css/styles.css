@@ -50,3 +50,7 @@
     border:1px solid #333;
     cursor:pointer;
   }
+
+form label {
+  vertical-align: top;
+  }

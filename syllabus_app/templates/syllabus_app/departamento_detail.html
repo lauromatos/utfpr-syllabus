@@ -1,38 +1,36 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Departamento: {{ departamento.nome_departamento }}</h1>
+    <div>
+      {% if perms.syllabus_app.change_departamento %}
+        <a href="{% url 'departamento-update' pk=departamento.pk %}" class="btn btn-secondary btn-sm">Alterar Departamento</a>
+      {% endif %}
+      {% if perms.syllabus_app.delete_departamento %}
+        <a href="{% url 'departamento-delete' pk=departamento.pk %}" class="btn btn-danger btn-sm ml-1">Excluir Departamento</a>
+      {% endif %}
+    </div>
+  </div>
 
-<h1>Departamento: {{ departamento.departamento }}</h1>
+  <p><strong>Sigla:</strong> {{ departamento.departamento }}</p>
 
-<div style="margin-left:20px;margin-top:20px">
-<h4>Cursos Cadastrados nesse Departamento</h4>
-
-<ul>
-  {% for nome_curso in departamento.departamento_set.all %}
-  <li>
-    <a href="{{ copy.get_absolute_url }}">{{ curso.nome_curso }}</a>
-  </li>
-  {% empty %}
-  <li>Nâo existem Cursos cadastrados nesse Departamento.</li>
-  {% endfor %}
-</ul>
-
-{% endblock %}
-
-
-{% block sidebar %}
-  {{ block.super }}
-
-  {% if perms.syllabus_app.change_departamento or perms.syllabus_app.delete_departamento %}
   <hr>
-  <ul class="sidebar-nav">
-    {% if perms.syllabus_app.change_departamento %}
-    <li><a href="{% url 'departamento-update' departamento.id %}">Atualizar Departamento</a></li>
+  <h4>Cursos Vinculados a este Departamento</h4>
+  {% with departamento.curso_set.all as cursos_do_departamento %}
+    {% if cursos_do_departamento %}
+      <ul class="list-group">
+        {% for curso in cursos_do_departamento %}
+          <li class="list-group-item">
+            <a href="{{ curso.get_absolute_url }}">{{ curso.nome_curso }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>Nenhum curso cadastrado para este departamento.</p>
     {% endif %}
-    {% if not departamento.departamento_set.all and perms.syllabus_app.departamento %}
-      <li><a href="{% url 'departamento-delete' departamento.id %}">Excluir Departamento</a></li>
-    {% endif %}
-    </ul>
-  {% endif %}
+  {% endwith %}
+
+  <p class="mt-3"><a href="{% url 'departamento' %}" class="btn btn-outline-primary">Voltar para Lista de Departamentos</a></p>
 
 {% endblock %}
