@@ -110,6 +110,12 @@ class DisciplinaForm(forms.ModelForm):
 class CustomAuthenticationForm(AuthenticationForm):
     username = forms.CharField(label='Usuário', widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control'}))
     password = forms.CharField(label='Senha', strip=False, widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    remember_me = forms.BooleanField(
+        label='Lembrar-me',
+        required=False,
+        initial=True,
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
 
 
 class DepartamentoForm(forms.ModelForm):

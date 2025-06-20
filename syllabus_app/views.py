@@ -510,6 +510,15 @@ class CustomLoginView(LoginView):
     template_name = 'registration/login.html'
     authentication_form = CustomAuthenticationForm # Seu formulário personalizado
 
+    def form_valid(self, form):
+        """Security check complete. Log the user in."""
+        remember_me = form.cleaned_data.get('remember_me')
+        if not remember_me:
+            # Se "Lembrar-me" não estiver marcado, a sessão expira quando o navegador fechar.
+            self.request.session.set_expiry(0)
+            self.request.session.modified = True
+        return super().form_valid(form)
+
     def get_success_url(self):
         url = self.get_redirect_url()
         # Lista de nomes de URL que não devem ser o destino após o login
