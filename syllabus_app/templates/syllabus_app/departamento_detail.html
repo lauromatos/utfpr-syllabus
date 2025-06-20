@@ -1,16 +1,15 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1>Departamento: {{ departamento.nome_departamento }}</h1>
-    <div>
-      {% if perms.syllabus_app.change_departamento %}
-        <a href="{% url 'departamento-update' pk=departamento.pk %}" class="btn btn-secondary btn-sm">Alterar Departamento</a>
-      {% endif %}
-      {% if perms.syllabus_app.delete_departamento %}
-        <a href="{% url 'departamento-delete' pk=departamento.pk %}" class="btn btn-danger btn-sm ml-1">Excluir Departamento</a>
-      {% endif %}
-    </div>
+  <h1>{{ departamento.nome_departamento }}</h1>
+
+  <div class="mb-3">
+    {% if perms.syllabus_app.change_departamento %}
+      <a href="{% url 'departamento-update' pk=departamento.pk %}" class="btn btn-secondary btn-sm">Alterar</a>
+    {% endif %}
+    {% if perms.syllabus_app.delete_departamento %}
+      <a href="{% url 'departamento-delete' pk=departamento.pk %}" class="btn btn-danger btn-sm ml-1">Excluir</a>
+    {% endif %}
   </div>
 
   <p><strong>Sigla:</strong> {{ departamento.departamento }}</p>

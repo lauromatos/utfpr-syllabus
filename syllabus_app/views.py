@@ -127,17 +127,19 @@ from django.urls import reverse
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .models import DisciplinasCursadas, Disciplina
-from .forms import AlunoAdicionaDisciplinaForm
+from .forms import AlunoAdicionaDisciplinaForm, DisciplinaForm, ReqConclusaoForm
 
 class DisciplinasCursadasCreate(PermissionRequiredMixin, CreateView):
     model = DisciplinasCursadas
     fields = ['ra_aluno', 'cod_disciplina']
     permission_required = 'syllabus_app.add_disciplinascursadas'
+    success_url = reverse_lazy('disciplinascursadas')
 
 class DisciplinasCursadasUpdate(PermissionRequiredMixin, UpdateView):
     model = DisciplinasCursadas
     fields = ['ra_aluno', 'cod_disciplina']
     permission_required = 'syllabus_app.change_disciplinascursadas'
+    success_url = reverse_lazy('disciplinascursadas')
 
 class DisciplinasCursadasDelete(PermissionRequiredMixin, DeleteView):
     model = DisciplinasCursadas
@@ -157,15 +159,13 @@ class DisciplinasCursadasDelete(PermissionRequiredMixin, DeleteView):
 
 class DisciplinaCreate(PermissionRequiredMixin, CreateView):
     model = Disciplina
-    fields = ['cod_disciplina', 'nome_disciplina', 'Departamento', 'carga_horaria',
-              'obrigatoria', 'cod_optativa', 'periodo', 'extensionista']
+    form_class = DisciplinaForm
     success_url = reverse_lazy('disciplina')
     permission_required = 'syllabus_app.add_disciplina'
 
 class DisciplinaUpdate(PermissionRequiredMixin, UpdateView):
     model = Disciplina
-    fields = ['cod_disciplina', 'nome_disciplina', 'Departamento', 'carga_horaria',
-              'obrigatoria', 'cod_optativa', 'periodo', 'extensionista']
+    form_class = DisciplinaForm
     success_url = reverse_lazy('disciplina')
     permission_required = 'syllabus_app.change_disciplina'
 

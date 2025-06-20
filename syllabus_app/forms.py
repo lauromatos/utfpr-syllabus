@@ -73,3 +73,11 @@ class ReqConclusaoForm(forms.ModelForm):
         # Como ch_extensionista tem blank=True no modelo, o campo do formulário terá required=False.
         # Se o usuário submeter vazio (o widget renderizou ''), ele será validado como None.
         # Ao salvar, o default=0 do modelo será aplicado se o valor for None.
+
+class DisciplinaForm(forms.ModelForm):
+    class Meta:
+        model = Disciplina
+        fields = ['cod_disciplina', 'nome_disciplina', 'Departamento', 'curso', 
+                  'carga_horaria', 'obrigatoria', 'cod_optativa', 'periodo', 'extensionista']
+        # Se o usuário submeter vazio (o widget renderizou ''), ele será validado como None.
+        # Ao salvar, o default=0 do modelo será aplicado se o valor for None.

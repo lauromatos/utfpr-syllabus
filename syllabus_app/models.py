@@ -22,7 +22,7 @@ class Aluno(models.Model):
 
 class Departamento(models.Model):
     departamento = models.CharField(max_length=10, unique=True, help_text='Digite a sigla do Departamento')
-    nome_departamento = models.CharField(max_length=45, help_text='Digite o nome do Departamento')
+    nome_departamento = models.CharField(max_length=55, help_text='Digite o nome do Departamento')
 
     class Meta:
         ordering = ['departamento', 'nome_departamento']
@@ -63,6 +63,7 @@ class Disciplina(models.Model):
     cod_disciplina = models.CharField(max_length=10)
     nome_disciplina = models.CharField(max_length=70)
     Departamento = models.ForeignKey('Departamento', on_delete=models.SET_NULL, null=True)
+    curso = models.ForeignKey('Curso', on_delete=models.SET_NULL, null=True, blank=True, help_text='Selecione o curso ao qual esta disciplina pertence')
     carga_horaria = models.CharField(max_length=3)
     obrigatoria = models.BooleanField()
     cod_optativa = models.ForeignKey('ConjuntoDisciplinas', on_delete=models.SET_NULL, null=True)
