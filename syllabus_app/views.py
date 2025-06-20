@@ -121,7 +121,7 @@ class DisciplinasCursadasAlunoListView(LoginRequiredMixin, generic.ListView):
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
-from django.db.models import ProtectedError
+from django.db.models import ProtectedError, Q
 from django.contrib import messages
 from django.urls import reverse
 from django.urls import reverse_lazy
@@ -337,29 +337,90 @@ def verificar_conclusao_curso(request, aluno_id):
         'requisitos_conclusao': requisitos_conclusao,
     })
 
-class AlunoAdicionaDisciplinaView(LoginRequiredMixin, CreateView):
-    model = DisciplinasCursadas
+class AlunoAdicionaDisciplinaView(LoginRequiredMixin, generic.FormView): # Changed to FormView
     form_class = AlunoAdicionaDisciplinaForm
     template_name = 'syllabus_app/aluno_adiciona_disciplina.html'
     success_url = reverse_lazy('disciplinascursadas')
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
-
     def dispatch(self, request, *args, **kwargs):
         if not hasattr(request.user, 'aluno'):
-            raise PermissionDenied("Você não tem permissão para adicionar disciplinas cursadas.")
+            messages.error(request, "Você não tem permissão para acessar esta página.")
+            return redirect('index')
         return super().dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form):
-        form.instance.ra_aluno = self.request.user
-        return super().form_valid(form)
+    def get_initial(self):
+        initial = super().get_initial()
+        # Retain search term if page is reloaded/navigated back with it in GET params
+        if 'cod_disciplina_input' in self.request.GET:
+            initial['cod_disciplina_input'] = self.request.GET.get('cod_disciplina_input')
+        return initial
+
+    def get(self, request, *args, **kwargs):
+        add_this_cod = request.GET.get('add_this_cod')
+
+        if add_this_cod:
+            try:
+                disciplina_to_add = Disciplina.objects.get(cod_disciplina__iexact=add_this_cod)
+                
+                if DisciplinasCursadas.objects.filter(ra_aluno=request.user, cod_disciplina=disciplina_to_add).exists():
+                    messages.error(request, f"Disciplina '{disciplina_to_add}' já cadastrada.")
+                else:
+                    DisciplinasCursadas.objects.create(ra_aluno=request.user, cod_disciplina=disciplina_to_add)
+                    messages.success(request, f"Disciplina '{disciplina_to_add}' adicionada com sucesso.")
+                # Don't redirect immediately. Re-render the search page.
+                # We need to re-fetch search results if a search term was present.
+                form = self.get_form() # Get a fresh form instance
+                search_term_from_get = request.GET.get('cod_disciplina_input_retained', '')
+                disciplinas_found = []
+                if search_term_from_get: # If a search term was retained
+                    form.fields['cod_disciplina_input'].initial = search_term_from_get # Pre-fill form
+                    disciplinas_found = list(
+                        Disciplina.objects.filter(
+                            Q(nome_disciplina__icontains=search_term_from_get) | Q(cod_disciplina__iexact=search_term_from_get)
+                        ).distinct()
+                    )
+                
+                # Pass already cursadas to template for button state
+                cursadas_cods = list(DisciplinasCursadas.objects.filter(ra_aluno=request.user).values_list('cod_disciplina__cod_disciplina', flat=True))
+                return self.render_to_response(self.get_context_data(form=form, disciplinas=disciplinas_found, cursadas_cods=cursadas_cods))
+
+            except Disciplina.DoesNotExist:
+                messages.error(request, "Disciplina inválida para adição.")
+                return redirect(reverse('aluno_adiciona_disciplina'))
+            except Exception as e: # Catch any other potential errors during creation
+                messages.error(request, f"Ocorreu um erro ao adicionar a disciplina: {str(e)}")
+                return redirect(reverse('aluno_adiciona_disciplina'))
+        return super().get(request, *args, **kwargs)
+
+    def form_valid(self, form): # Called by FormView's post method if form is valid
+        # This method is now only for searching and displaying results.
+        search_term = form.cleaned_data.get('cod_disciplina_input', '').strip()
+        disciplinas_found = []
+
+        if search_term:
+            disciplinas_found = list(
+                Disciplina.objects.filter(
+                    Q(nome_disciplina__icontains=search_term) | Q(cod_disciplina__iexact=search_term)
+                ).distinct()
+            )
+
+        if disciplinas_found:
+            # Always display results, even if only one, as per new requirement
+            # Pass already cursadas to template for button state
+            cursadas_cods = list(DisciplinasCursadas.objects.filter(ra_aluno=self.request.user).values_list('cod_disciplina__cod_disciplina', flat=True))
+            return self.render_to_response(
+                self.get_context_data(form=form, disciplinas=disciplinas_found, cursadas_cods=cursadas_cods)
+            )
+        else: # No search term provided (form might be valid but empty if not required, though it is) or no results
+            if search_term: # Only add error if a search was attempted
+                form.add_error('cod_disciplina_input', 'Nenhuma disciplina encontrada com o termo fornecido.')
+            return self.form_invalid(form) # Renders form with errors
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['aluno'] = self.request.user.aluno
+        if hasattr(self.request.user, 'aluno'): # Ensure aluno is in context
+            context['aluno'] = self.request.user.aluno
         return context
 
 class AlunoRemoveDisciplinaView(LoginRequiredMixin, DeleteView):
@@ -373,5 +434,11 @@ class AlunoRemoveDisciplinaView(LoginRequiredMixin, DeleteView):
 
     def dispatch(self, request, *args, **kwargs):
         if not hasattr(request.user, 'aluno'):
-            raise PermissionDenied("Você não tem permissão para remover disciplinas cursadas.")
+            messages.error(request, "Você não tem permissão para remover disciplinas cursadas.")
+            return redirect('index')
         return super().dispatch(request, *args, **kwargs)
+    
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_message = f"Disciplina '{self.object.cod_disciplina}' removida da sua lista com sucesso."
+        # The actual deletion is handled by super().delete()

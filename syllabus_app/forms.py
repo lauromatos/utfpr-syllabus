@@ -36,24 +36,13 @@ class UserRegistrationForm(forms.Form):
         
         return user
 
-class AlunoAdicionaDisciplinaForm(forms.ModelForm):
-    class Meta:
-        model = DisciplinasCursadas
-        fields = ['cod_disciplina']
-        labels = {
-            'cod_disciplina': 'Disciplina',
-        }
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)
-        super().__init__(*args, **kwargs)
-
-    def clean_cod_disciplina(self):
-        disciplina = self.cleaned_data.get('cod_disciplina')
-        if self.user and disciplina:
-            if DisciplinasCursadas.objects.filter(ra_aluno=self.user, cod_disciplina=disciplina).exists():
-                raise forms.ValidationError('Você já cadastrou esta disciplina.')
-        return disciplina
+class AlunoAdicionaDisciplinaForm(forms.Form): # Changed from ModelForm to Form
+    cod_disciplina_input = forms.CharField(
+        label='Disciplina (Código ou Nome)',
+        help_text='Digite o código ou nome da disciplina para buscar.',
+        max_length=100,
+        required=True # Ensure input is provided for searching
+    )
 
 
 class BlankZeroInput(forms.NumberInput):

@@ -12,7 +12,36 @@
     <table>
       {{ form.as_table }} {# O formulário só terá o campo cod_disciplina #}
     </table>
-    <button type="submit">Adicionar Disciplina</button>
+    <button type="submit" class="btn btn-success">Adicionar/Buscar Disciplina</button>
   </form>
+
+  {% if disciplinas %}
+    <h3 class="mt-4">Resultados da Busca</h3>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Nome</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for disciplina in disciplinas %}
+          <tr>
+            <td>{{ disciplina.cod_disciplina }}</td>
+            <td>{{ disciplina.nome_disciplina }}</td>
+            <td>
+              {% if disciplina.cod_disciplina in cursadas_cods %}
+                <button type="button" class="btn btn-outline-success btn-sm" disabled>Incluída</button>
+              {% else %}
+                {# Retain the original search term when adding #}
+                <a href="{% url 'aluno_adiciona_disciplina' %}?add_this_cod={{ disciplina.cod_disciplina }}{% if form.cod_disciplina_input.value %}&cod_disciplina_input_retained={{ form.cod_disciplina_input.value|urlencode }}{% endif %}" class="btn btn-primary btn-sm">Incluir esta</a>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
   <p><a href="{% url 'disciplinascursadas' %}">Cancelar e voltar para Minhas Disciplinas</a></p>
 {% endblock %}
