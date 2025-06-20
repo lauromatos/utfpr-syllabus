@@ -1,72 +1,21 @@
-{% extends "base_generic.html" %}
+{% extends "syllabus_app/_form_card_base.html" %}
 
-{% block title %}
-  <title>
-    {% if object %}
-      Editar Disciplina - {{ object.nome_disciplina }}
-    {% else %}
-      Adicionar Nova Disciplina
-    {% endif %}
-    - Sistema Syllabus
-  </title>
+{% block form_title %}
+  {% if object %}Editar Disciplina - {{ object.nome_disciplina }}{% else %}Adicionar Nova Disciplina{% endif %}
 {% endblock %}
 
-{% block content %}
-  <div class="row mt-4">
-    <div class="col-md-8 col-lg-7">
-      <div class="card">
-        <div class="card-header">
-          <h2 class="mb-0 text-center">
-            {% if object %}
-              <i class="fas fa-edit mr-2"></i>Editar Disciplina
-            {% else %}
-              <i class="fas fa-book mr-2"></i>Adicionar Nova Disciplina
-            {% endif %}
-          </h2>
-        </div>
-        <div class="card-body">
-          {% if form.errors %}
-            <div class="alert alert-danger" role="alert">
-              <p class="mb-1"><strong>Por favor, corrija os erros abaixo:</strong></p>
-              <ul class="mb-0">
-                {% for field_obj in form %}
-                  {% for error in field_obj.errors %}
-                    <li>{{ field_obj.label|capfirst }}: {{ error }}</li>
-                  {% endfor %}
-                {% endfor %}
-                {% for error in form.non_field_errors %}
-                  <li>{{ error }}</li>
-                {% endfor %}
-              </ul>
-            </div>
-          {% endif %}
+{% block form_card_title %}
+  {% if object %}Editar Disciplina{% else %}Adicionar Nova Disciplina{% endif %}
+{% endblock %}
 
-          <form action="" method="post">
-            {% csrf_token %}
-            {% for field in form %}
-              <div class="form-group">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {% if field.field.widget.input_type == 'checkbox' %}
-                  <div class="form-check">
-                    {{ field }}
-                    <label class="form-check-label" for="{{ field.id_for_label }}">
-                      {{ field.help_text|safe }}
-                    </label>
-                  </div>
-                {% else %}
-                  {{ field }}
-                {% endif %}
-                {% if field.help_text and field.field.widget.input_type != 'checkbox' %}<small class="form-text text-muted">{{ field.help_text|safe }}</small>{% endif %}
-                {% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
-              </div>
-            {% endfor %}
-            <button type="submit" class="btn btn-primary btn-block btn-login-custom">
-              {% if object %}Salvar Alterações{% else %}Adicionar Disciplina{% endif %}
-            </button>
-            <a href="{% if object %}{{ object.get_absolute_url }}{% else %}{% url 'disciplina' %}{% endif %}" class="btn btn-outline-secondary btn-block mt-2">Cancelar</a>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
+{% block form_icon %}
+  {% if object %}fas fa-edit{% else %}fas fa-book{% endif %}
+{% endblock %}
+
+{% block form_submit_button_text %}
+  {% if object %}Salvar Alterações{% else %}Adicionar Disciplina{% endif %}
+{% endblock %}
+
+{% block form_cancel_url %}
+  {% if object %}{{ object.get_absolute_url }}{% else %}{% url 'disciplina' %}{% endif %}
 {% endblock %}
