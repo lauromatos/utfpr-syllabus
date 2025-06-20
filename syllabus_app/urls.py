@@ -5,6 +5,7 @@ from syllabus_app import views
 urlpatterns = [
     # URLs principais e de autenticação
     path('', views.index, name='index'),
+    path('welcome/', views.welcome, name='welcome'), # Nova URL para a página de boas-vindas
     path('register/', views.register, name='register'),
 
     # URLs for Curso

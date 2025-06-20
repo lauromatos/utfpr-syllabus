@@ -3,6 +3,11 @@ from syllabus_app.models import Aluno, Departamento, Curso, ConjuntoDisciplinas,
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login # type: ignore
 from .forms import UserRegistrationForm, ReqConclusaoForm
+# Adicionando importações para as views de login/logout personalizadas
+from django.contrib.auth.views import LoginView, LogoutView
+from django.urls import resolve, Resolver404
+from django.shortcuts import resolve_url # Importação corrigida para resolve_url
+from django.conf import settings
 from django.core.exceptions import PermissionDenied
 
 
@@ -31,6 +36,8 @@ def index(request):
     return render(request, 'index.html', context=context)
 
 def register(request):
+    if request.user.is_authenticated:
+        return redirect('index') # Redireciona para o index se já estiver logado
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
@@ -41,26 +48,27 @@ def register(request):
         form = UserRegistrationForm()
     return render(request, 'registration/register.html', {'form': form})
 
+def welcome(request):
+    return render(request, 'welcome.html')
 
 from django.views import generic
+from .mixins import AuthListViewMixin, DisciplinaAdderMixin # Import DisciplinaAdderMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-class AlunoListView(generic.ListView):
+class AlunoListView(AuthListViewMixin, generic.ListView):
     model = Aluno
-    paginate_by = 10
 
 class AlunoDetailView(generic.DetailView):
     model = Aluno
 
-class DepartamentoListView(generic.ListView):
+class DepartamentoListView(AuthListViewMixin, generic.ListView):
     model = Departamento
-    paginate_by = 10
 
 class DepartamentoDetailView(generic.DetailView):
     model = Departamento
 
-class CursoListView(generic.ListView):
+class CursoListView(AuthListViewMixin, generic.ListView):
     model = Curso
-    paginate_by = 10
 
 class CursoDetailView(generic.DetailView):
     model = Curso
@@ -68,38 +76,30 @@ class CursoDetailView(generic.DetailView):
 class ConjuntoDisciplinasDetailView(generic.DetailView):
     model = ConjuntoDisciplinas
 
-class ConjuntoDisciplinasListView(generic.ListView):
+class ConjuntoDisciplinasListView(AuthListViewMixin, generic.ListView):
     model = ConjuntoDisciplinas
-    paginate_by = 10
 
 class DisciplinaDetailView(generic.DetailView):
     model = Disciplina
 
-class DisciplinaListView(generic.ListView):
+class DisciplinaListView(AuthListViewMixin, generic.ListView):
     model = Disciplina
-    paginate_by = 10
 
 class DisciplinasCursadasDetailView(generic.DetailView):
     model = DisciplinasCursadas
 
-class DisciplinasCursadasListView(generic.ListView):
+class DisciplinasCursadasListView(AuthListViewMixin, generic.ListView): # Para a lista geral de admin
     model = DisciplinasCursadas
-    paginate_by = 10
 
 class ReqConclusaoDetailView(generic.DetailView):
     model = ReqConclusao
 
-class ReqConclusaoListView(generic.ListView):
+class ReqConclusaoListView(AuthListViewMixin, generic.ListView):
     model = ReqConclusao
-    paginate_by = 10
 
-
-from django.contrib.auth.mixins import LoginRequiredMixin
-
-class DisciplinasCursadasAlunoListView(LoginRequiredMixin, generic.ListView):
+class DisciplinasCursadasAlunoListView(AuthListViewMixin, generic.ListView):
     model = DisciplinasCursadas
     template_name = 'syllabus_app/disciplinas_cursadas_aluno_list.html'
-    paginate_by = 10
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
@@ -123,17 +123,93 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from django.db.models import ProtectedError, Q
 from django.contrib import messages
-from django.urls import reverse
+from django.urls import reverse 
 from django.urls import reverse_lazy
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from .models import DisciplinasCursadas, Disciplina
-from .forms import AlunoAdicionaDisciplinaForm, DisciplinaForm, ReqConclusaoForm
+from django.views.generic.edit import CreateView, UpdateView, DeleteView 
+from .models import DisciplinasCursadas, Disciplina # DisciplinasCursadasForm is from .forms
+from .forms import AlunoAdicionaDisciplinaForm, DisciplinaForm, ReqConclusaoForm, CustomAuthenticationForm, DepartamentoForm, CursoForm, ConjuntoDisciplinasForm, DisciplinasCursadasForm # Added DisciplinasCursadasForm
 
-class DisciplinasCursadasCreate(PermissionRequiredMixin, CreateView):
+class DisciplinasCursadasCreate(PermissionRequiredMixin, DisciplinaAdderMixin, generic.FormView):
     model = DisciplinasCursadas
-    fields = ['ra_aluno', 'cod_disciplina']
+    form_class = DisciplinasCursadasForm # Use the new form
     permission_required = 'syllabus_app.add_disciplinascursadas'
     success_url = reverse_lazy('disciplinascursadas')
+    template_name = 'syllabus_app/disciplinascursadas_form.html' # Use the new template
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if 'disciplinas' not in context:
+            context['disciplinas'] = []
+        if 'cursadas_cods_for_selected_aluno' not in context:
+            context['cursadas_cods_for_selected_aluno'] = []
+        if 'selected_ra_aluno_pk' not in context and self.request.GET.get('ra_aluno'):
+            context['selected_ra_aluno_pk'] = self.request.GET.get('ra_aluno')
+        return context
+
+    def get_initial(self):
+        initial = super().get_initial()
+        if 'ra_aluno' in self.request.GET:
+            initial['ra_aluno'] = self.request.GET.get('ra_aluno')
+        if self.search_input_field_name in self.request.GET:
+            initial[self.search_input_field_name] = self.request.GET.get(self.search_input_field_name)
+        return initial
+
+    def get(self, request, *args, **kwargs):
+        add_ra_aluno_username = request.GET.get('add_ra_aluno') # This should be user's PK or username
+        add_cod_disciplina = request.GET.get('add_cod_disciplina')
+        retained_search_term = request.GET.get('cod_disciplina_input_retained', '')
+        retained_ra_aluno_pk = request.GET.get('ra_aluno_retained_pk')
+
+        user_obj_for_add = None
+        if add_ra_aluno_username:
+            try:
+                user_obj_for_add = User.objects.get(pk=add_ra_aluno_username) # Assuming add_ra_aluno is PK
+            except User.DoesNotExist:
+                messages.error(request, f"Aluno com ID '{add_ra_aluno_username}' não encontrado.")
+
+        if user_obj_for_add and add_cod_disciplina:
+            self.try_add_discipline_to_user(request, user_obj_for_add, add_cod_disciplina)
+            
+            # Re-render the page
+            form = self.get_form_class()(initial={'ra_aluno': user_obj_for_add.pk, self.search_input_field_name: retained_search_term})
+            disciplinas_found = self.get_disciplines_for_search(retained_search_term)
+            cursadas_cods = self.get_already_cursadas_codes(user_obj_for_add)
+            return self.render_to_response(self.get_context_data(form=form, disciplinas=disciplinas_found, cursadas_cods_for_selected_aluno=cursadas_cods, selected_ra_aluno_pk=user_obj_for_add.pk))
+
+        # For initial GET or GET after search POST (from form_valid)
+        form = self.get_form()
+        search_term = request.GET.get(self.search_input_field_name, '') 
+        selected_ra_aluno_pk = request.GET.get('ra_aluno')
+        
+        disciplinas_found = []
+        cursadas_cods = []
+        user_for_check = None
+        if selected_ra_aluno_pk:
+            try:
+                user_for_check = User.objects.get(pk=selected_ra_aluno_pk)
+                cursadas_cods = self.get_already_cursadas_codes(user_for_check)
+                if search_term : # Only search if a student is selected
+                    disciplinas_found = self.get_disciplines_for_search(search_term)
+            except User.DoesNotExist:
+                messages.error(request, "Aluno selecionado não encontrado.")
+        
+        return self.render_to_response(self.get_context_data(form=form, disciplinas=disciplinas_found, cursadas_cods_for_selected_aluno=cursadas_cods, selected_ra_aluno_pk=selected_ra_aluno_pk))
+
+    def form_valid(self, form): # Called on POST (for searching)
+        ra_aluno_obj = form.cleaned_data.get('ra_aluno')
+        search_term = form.cleaned_data.get(self.search_input_field_name, '').strip()
+        
+        if not ra_aluno_obj:
+            form.add_error('ra_aluno', "Por favor, selecione um aluno para realizar a busca.")
+            return self.form_invalid(form)
+
+        disciplinas_found = self.get_disciplines_for_search(search_term)
+        cursadas_cods = self.get_already_cursadas_codes(ra_aluno_obj)
+
+        if search_term and not disciplinas_found:
+            form.add_error(self.search_input_field_name, 'Nenhuma disciplina encontrada com o termo fornecido.')
+
+        return self.render_to_response(self.get_context_data(form=form, disciplinas=disciplinas_found, cursadas_cods_for_selected_aluno=cursadas_cods, selected_ra_aluno_pk=ra_aluno_obj.pk))
 
 class DisciplinasCursadasUpdate(PermissionRequiredMixin, UpdateView):
     model = DisciplinasCursadas
@@ -141,6 +217,7 @@ class DisciplinasCursadasUpdate(PermissionRequiredMixin, UpdateView):
     permission_required = 'syllabus_app.change_disciplinascursadas'
     success_url = reverse_lazy('disciplinascursadas')
 
+# Note: DisciplinasCursadasDelete does not need a form template change as it's a confirmation page.
 class DisciplinasCursadasDelete(PermissionRequiredMixin, DeleteView):
     model = DisciplinasCursadas
     success_url = reverse_lazy('disciplinascursadas')
@@ -160,12 +237,14 @@ class DisciplinasCursadasDelete(PermissionRequiredMixin, DeleteView):
 class DisciplinaCreate(PermissionRequiredMixin, CreateView):
     model = Disciplina
     form_class = DisciplinaForm
+    template_name = 'syllabus_app/disciplina_form.html' # Especificar template
     success_url = reverse_lazy('disciplina')
     permission_required = 'syllabus_app.add_disciplina'
 
 class DisciplinaUpdate(PermissionRequiredMixin, UpdateView):
     model = Disciplina
     form_class = DisciplinaForm
+    template_name = 'syllabus_app/disciplina_form.html' # Especificar template
     success_url = reverse_lazy('disciplina')
     permission_required = 'syllabus_app.change_disciplina'
 
@@ -186,13 +265,15 @@ class DisciplinaDelete(PermissionRequiredMixin, DeleteView):
 
 class CursoCreate(PermissionRequiredMixin, CreateView):
     model = Curso
-    fields = ['nome_curso', 'departamento']
+    form_class = CursoForm # Usar form_class
+    template_name = 'syllabus_app/curso_form.html' # Especificar template
     success_url = reverse_lazy('curso')
     permission_required = 'syllabus_app.add_curso'
 
 class CursoUpdate(PermissionRequiredMixin, UpdateView):
     model = Curso
-    fields = ['nome_curso', 'departamento']
+    form_class = CursoForm # Usar form_class
+    template_name = 'syllabus_app/curso_form.html' # Especificar template
     success_url = reverse_lazy('curso')
     permission_required = 'syllabus_app.change_curso'
 
@@ -214,14 +295,16 @@ class CursoDelete(PermissionRequiredMixin, DeleteView):
 
 class DepartamentoCreate(PermissionRequiredMixin, CreateView):
     model = Departamento
-    fields = ['departamento', 'nome_departamento']
+    form_class = DepartamentoForm # Usar form_class
+    template_name = 'syllabus_app/departamento_form.html' # Especificar template
     permission_required = 'syllabus_app.add_departamento'
     success_url = reverse_lazy('departamento') # Redireciona para a lista de departamentos após a criação
 
 
 class DepartamentoUpdate(PermissionRequiredMixin, UpdateView):
     model = Departamento
-    fields = ['departamento', 'nome_departamento']
+    form_class = DepartamentoForm # Usar form_class
+    template_name = 'syllabus_app/departamento_form.html' # Especificar template
     permission_required = 'syllabus_app.change_departamento'
     success_url = reverse_lazy('departamento') # Redireciona para a lista de departamentos após a atualização
 
@@ -244,14 +327,16 @@ class DepartamentoDelete(PermissionRequiredMixin, DeleteView):
 
 class ConjuntoDisciplinasCreate(PermissionRequiredMixin, CreateView):
     model = ConjuntoDisciplinas
-    fields = ['cod_optativa', 'nome_conjunto', 'ch_obrigatoria']
+    form_class = ConjuntoDisciplinasForm # Usar form_class
+    template_name = 'syllabus_app/conjuntodisciplinas_form.html' # Especificar template
     success_url = reverse_lazy('conjuntodisciplinas')
     permission_required = 'syllabus_app.add_conjuntodisciplinas'
 
 
 class ConjuntoDisciplinasUpdate(PermissionRequiredMixin, UpdateView):
     model = ConjuntoDisciplinas
-    fields = ['cod_optativa', 'nome_conjunto', 'ch_obrigatoria']
+    form_class = ConjuntoDisciplinasForm # Usar form_class
+    template_name = 'syllabus_app/conjuntodisciplinas_form.html' # Especificar template
     success_url = reverse_lazy('conjuntodisciplinas')
     permission_required = 'syllabus_app.change_conjuntodisciplinas'
 
@@ -275,6 +360,7 @@ class ConjuntoDisciplinasDelete(PermissionRequiredMixin, DeleteView):
 class ReqConclusaoCreate(PermissionRequiredMixin, CreateView):
     model = ReqConclusao
     form_class = ReqConclusaoForm
+    template_name = 'syllabus_app/reqconclusao_form.html' # Especificar template
     success_url = reverse_lazy('reqconclusao')
     permission_required = 'syllabus_app.add_reqconclusao'
 
@@ -282,6 +368,7 @@ class ReqConclusaoCreate(PermissionRequiredMixin, CreateView):
 class ReqConclusaoUpdate(PermissionRequiredMixin, UpdateView):
     model = ReqConclusao
     form_class = ReqConclusaoForm
+    template_name = 'syllabus_app/reqconclusao_form.html' # Especificar template
     permission_required = 'syllabus_app.change_reqconclusao'
     success_url = reverse_lazy('reqconclusao') # Redireciona para a lista após a atualização
 
@@ -337,7 +424,7 @@ def verificar_conclusao_curso(request, aluno_id):
         'requisitos_conclusao': requisitos_conclusao,
     })
 
-class AlunoAdicionaDisciplinaView(LoginRequiredMixin, generic.FormView): # Changed to FormView
+class AlunoAdicionaDisciplinaView(LoginRequiredMixin, DisciplinaAdderMixin, generic.FormView):
     form_class = AlunoAdicionaDisciplinaForm
     template_name = 'syllabus_app/aluno_adiciona_disciplina.html'
     success_url = reverse_lazy('disciplinascursadas')
@@ -351,69 +438,39 @@ class AlunoAdicionaDisciplinaView(LoginRequiredMixin, generic.FormView): # Chang
     def get_initial(self):
         initial = super().get_initial()
         # Retain search term if page is reloaded/navigated back with it in GET params
-        if 'cod_disciplina_input' in self.request.GET:
-            initial['cod_disciplina_input'] = self.request.GET.get('cod_disciplina_input')
+        if self.search_input_field_name in self.request.GET:
+            initial[self.search_input_field_name] = self.request.GET.get(self.search_input_field_name)
         return initial
 
     def get(self, request, *args, **kwargs):
         add_this_cod = request.GET.get('add_this_cod')
+        retained_search_term = request.GET.get('cod_disciplina_input_retained', '')
 
         if add_this_cod:
-            try:
-                disciplina_to_add = Disciplina.objects.get(cod_disciplina__iexact=add_this_cod)
-                
-                if DisciplinasCursadas.objects.filter(ra_aluno=request.user, cod_disciplina=disciplina_to_add).exists():
-                    messages.error(request, f"Disciplina '{disciplina_to_add}' já cadastrada.")
-                else:
-                    DisciplinasCursadas.objects.create(ra_aluno=request.user, cod_disciplina=disciplina_to_add)
-                    messages.success(request, f"Disciplina '{disciplina_to_add}' adicionada com sucesso.")
-                # Don't redirect immediately. Re-render the search page.
-                # We need to re-fetch search results if a search term was present.
-                form = self.get_form() # Get a fresh form instance
-                search_term_from_get = request.GET.get('cod_disciplina_input_retained', '')
-                disciplinas_found = []
-                if search_term_from_get: # If a search term was retained
-                    form.fields['cod_disciplina_input'].initial = search_term_from_get # Pre-fill form
-                    disciplinas_found = list(
-                        Disciplina.objects.filter(
-                            Q(nome_disciplina__icontains=search_term_from_get) | Q(cod_disciplina__iexact=search_term_from_get)
-                        ).distinct()
-                    )
-                
-                # Pass already cursadas to template for button state
-                cursadas_cods = list(DisciplinasCursadas.objects.filter(ra_aluno=request.user).values_list('cod_disciplina__cod_disciplina', flat=True))
-                return self.render_to_response(self.get_context_data(form=form, disciplinas=disciplinas_found, cursadas_cods=cursadas_cods))
+            self.try_add_discipline_to_user(request, request.user, add_this_cod)
+            # Re-render the page
+            form = self.get_form_class()(initial={self.search_input_field_name: retained_search_term})
+            disciplinas_found = self.get_disciplines_for_search(retained_search_term)
+            cursadas_cods = self.get_already_cursadas_codes(request.user)
+            return self.render_to_response(self.get_context_data(form=form, disciplinas=disciplinas_found, cursadas_cods=cursadas_cods))
 
-            except Disciplina.DoesNotExist:
-                messages.error(request, "Disciplina inválida para adição.")
-                return redirect(reverse('aluno_adiciona_disciplina'))
-            except Exception as e: # Catch any other potential errors during creation
-                messages.error(request, f"Ocorreu um erro ao adicionar a disciplina: {str(e)}")
-                return redirect(reverse('aluno_adiciona_disciplina'))
         return super().get(request, *args, **kwargs)
 
     def form_valid(self, form): # Called by FormView's post method if form is valid
         # This method is now only for searching and displaying results.
-        search_term = form.cleaned_data.get('cod_disciplina_input', '').strip()
-        disciplinas_found = []
-
-        if search_term:
-            disciplinas_found = list(
-                Disciplina.objects.filter(
-                    Q(nome_disciplina__icontains=search_term) | Q(cod_disciplina__iexact=search_term)
-                ).distinct()
-            )
+        search_term = form.cleaned_data.get(self.search_input_field_name, '').strip()
+        disciplinas_found = self.get_disciplines_for_search(search_term)
 
         if disciplinas_found:
             # Always display results, even if only one, as per new requirement
             # Pass already cursadas to template for button state
-            cursadas_cods = list(DisciplinasCursadas.objects.filter(ra_aluno=self.request.user).values_list('cod_disciplina__cod_disciplina', flat=True))
+            cursadas_cods = self.get_already_cursadas_codes(self.request.user)
             return self.render_to_response(
                 self.get_context_data(form=form, disciplinas=disciplinas_found, cursadas_cods=cursadas_cods)
             )
         else: # No search term provided (form might be valid but empty if not required, though it is) or no results
             if search_term: # Only add error if a search was attempted
-                form.add_error('cod_disciplina_input', 'Nenhuma disciplina encontrada com o termo fornecido.')
+                form.add_error(self.search_input_field_name, 'Nenhuma disciplina encontrada com o termo fornecido.')
             return self.form_invalid(form) # Renders form with errors
 
 
@@ -421,6 +478,8 @@ class AlunoAdicionaDisciplinaView(LoginRequiredMixin, generic.FormView): # Chang
         context = super().get_context_data(**kwargs)
         if hasattr(self.request.user, 'aluno'): # Ensure aluno is in context
             context['aluno'] = self.request.user.aluno
+        if 'cursadas_cods' not in context: # Ensure this is available for the student view
+            context['cursadas_cods'] = self.get_already_cursadas_codes(self.request.user) if self.request.user.is_authenticated else []
         return context
 
 class AlunoRemoveDisciplinaView(LoginRequiredMixin, DeleteView):
@@ -442,3 +501,49 @@ class AlunoRemoveDisciplinaView(LoginRequiredMixin, DeleteView):
         self.object = self.get_object()
         success_message = f"Disciplina '{self.object.cod_disciplina}' removida da sua lista com sucesso."
         # The actual deletion is handled by super().delete()
+        response = super().delete(request, *args, **kwargs)
+        messages.success(self.request, success_message)
+        return response
+
+
+class CustomLoginView(LoginView):
+    template_name = 'registration/login.html'
+    authentication_form = CustomAuthenticationForm # Seu formulário personalizado
+
+    def get_success_url(self):
+        url = self.get_redirect_url()
+        # Lista de nomes de URL que não devem ser o destino após o login
+        # se passados como 'next'
+        restricted_next_pages = [
+            'register', 'login', 'welcome', 
+            'password_reset', 'password_reset_done', 
+            'password_reset_confirm', 'password_reset_complete'
+        ]
+        if url:
+            try:
+                # Remove query parameters (como ?next=...) antes de resolver o nome da URL
+                path_to_resolve = url.split('?')[0]
+                match = resolve(path_to_resolve)
+                if match.url_name in restricted_next_pages:
+                    # Se 'next' for uma dessas páginas restritas, redireciona para LOGIN_REDIRECT_URL
+                    return resolve_url(settings.LOGIN_REDIRECT_URL)
+            except Resolver404:
+                # Se a URL 'next' não resolver, usa LOGIN_REDIRECT_URL como fallback
+                return resolve_url(settings.LOGIN_REDIRECT_URL)
+        
+        # Se 'url' (next) for válido e não restrito, usa-o.
+        # Caso contrário (url é None ou vazio), usa LOGIN_REDIRECT_URL.
+        return url or resolve_url(settings.LOGIN_REDIRECT_URL)
+
+class CustomLogoutView(LogoutView):
+    def get_next_page(self):
+        next_page_param = self.request.POST.get('next', self.request.GET.get('next'))
+        if next_page_param:
+            try:
+                path_to_resolve = next_page_param.split('?')[0]
+                match = resolve(path_to_resolve)
+                if match.url_name == 'register':
+                    return resolve_url(settings.LOGOUT_REDIRECT_URL or '/')
+            except Resolver404:
+                pass
+        return super().get_next_page()

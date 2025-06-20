@@ -1,0 +1,17 @@
+{% extends "base_generic.html" %}
+
+{% block title %}<title>Bem-vindo ao Sistema Syllabus</title>{% endblock %}
+
+{% block content %}
+  <div class="jumbotron">
+    <h1 class="display-4">Bem-vindos ao Sistema Syllabus da UTFPR!</h1>
+    <p class="lead">Este sistema ajuda você a gerenciar seu progresso acadêmico, verificar requisitos de conclusão e muito mais.</p>
+    <hr class="my-4">
+    <p>Para acessar todas as funcionalidades, por favor, faça o login ou registre-se.</p>
+    <a class="btn btn-primary btn-lg mr-2" href="{% url 'login' %}" role="button">Entrar</a>
+    <a class="btn btn-secondary btn-lg" href="{% url 'register' %}" role="button">Registrar Novo Aluno</a>
+  </div>
+
+  {# Você pode adicionar mais informações aqui, como links para guias, notícias, etc. #}
+
+{% endblock %}

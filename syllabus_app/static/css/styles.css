@@ -142,3 +142,53 @@ form th {
   vertical-align: top;
   padding-right: 10px; /* Adiciona espaço à direita do rótulo */
 }
+
+/* Estilos para compactar o formulário de login */
+.login-form-compact .card-header {
+    padding: 1rem;
+}
+.login-form-compact .card-header h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+.login-form-compact .card-body {
+    padding: 1rem;
+}
+
+.login-form-compact .form-group {
+    margin-bottom: 0.75rem; /* Diminui o espaçamento entre os grupos de formulário */
+}
+
+.login-form-compact label {
+    font-size: 0.875rem; /* Diminui o tamanho da fonte dos rótulos */
+    margin-bottom: 0.25rem; /* Diminui a margem inferior dos rótulos */
+}
+
+.login-form-compact .form-control {
+    font-size: 0.875rem; /* Diminui o tamanho da fonte nos campos de input */
+    padding: 0.375rem 0.75rem; /* Ajusta o padding dos inputs para ficarem menores */
+    height: auto; /* Permite que a altura seja definida pelo padding e font-size */
+}
+
+.login-form-compact .btn {
+    font-size: 0.875rem; /* Diminui o tamanho da fonte do botão */
+    padding: 0.375rem 0.75rem; /* Ajusta o padding do botão */
+}
+
+.login-form-compact .alert {
+    font-size: 0.875rem; /* Diminui o tamanho da fonte dos alertas */
+    padding: 0.5rem 1rem; /* Ajusta o padding dos alertas */
+    margin-bottom: 0.75rem; /* Diminui a margem inferior dos alertas */
+}
+
+.login-form-compact hr {
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.login-form-compact p {
+    font-size: 0.875rem; /* Diminui o tamanho da fonte dos parágrafos (ex: link de registro) */
+    margin-bottom: 0;
+}

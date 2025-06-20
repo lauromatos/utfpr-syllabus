@@ -1,13 +1,120 @@
 {% extends "base_generic.html" %}
 
+{% block title %}<title>Registrar Novo Aluno - Sistema Syllabus</title>{% endblock %}
+
 {% block content %}
-  <h2>Cadastro de Novo Usuário</h2>
-  <form method="post">
-    {% csrf_token %}
-    <table>
-      {{ form.as_table }}
-    </table>
-    <button type="submit">Cadastrar</button>
-  </form>
-  <p><a href="{% url 'login' %}">Já tem uma conta? Faça login</a></p>
+  <div class="row mt-4"> 
+    <div class="col-md-6 col-lg-5 login-form-compact"> {# Usando as mesmas classes de coluna e compactação do login #}
+      <div class="card">
+        <div class="card-header">
+          <h2 class="mb-0 text-center"><i class="fas fa-user-plus mr-2"></i>Registrar Novo Aluno</h2>
+        </div>
+        <div class="card-body">
+          {% if form.errors %}
+            <div class="alert alert-danger" role="alert">
+              <p class="mb-1"><strong>Por favor, corrija os erros abaixo:</strong></p>
+              <ul class="mb-0">
+                {% for field_obj in form %} {# Iterate through BoundFields in the form #}
+                  {% for error in field_obj.errors %}
+                    <li>{{ field_obj.label|capfirst }}: {{ error }}</li>
+                  {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %} {# Handle non-field errors separately #}
+                  <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+
+          <form method="post" action="{% url 'register' %}">
+            {% csrf_token %}
+            
+            <div class="form-group">
+              <label for="{{ form.ra_aluno.id_for_label }}">{{ form.ra_aluno.label }}</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                </div>
+                {{ form.ra_aluno }}
+              </div>
+              {% if form.ra_aluno.help_text %}
+                <small class="form-text text-muted">{{ form.ra_aluno.help_text }}</small>
+              {% endif %}
+              {% for error in form.ra_aluno.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.nome_aluno.id_for_label }}">{{ form.nome_aluno.label }}</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fas fa-user-graduate"></i></span>
+                </div>
+                {{ form.nome_aluno }}
+              </div>
+              {% if form.nome_aluno.help_text %}
+                <small class="form-text text-muted">{{ form.nome_aluno.help_text }}</small>
+              {% endif %}
+              {% for error in form.nome_aluno.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.nome_curso.id_for_label }}">{{ form.nome_curso.label }}</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-graduation-cap"></i></span>
+                    </div>
+                    {{ form.nome_curso }}
+                </div>
+                {% if form.nome_curso.help_text %}
+                    <small class="form-text text-muted">{{ form.nome_curso.help_text }}</small>
+                {% endif %}
+                {% for error in form.nome_curso.errors %}
+                    <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                </div>
+                {{ form.password }}
+              </div>
+              {% if form.password.help_text %}
+                <small class="form-text text-muted">{{ form.password.help_text }}</small>
+              {% endif %}
+              {% for error in form.password.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.password_confirm.id_for_label }}">{{ form.password_confirm.label }}</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fas fa-check-circle"></i></span>
+                </div>
+                {{ form.password_confirm }}
+              </div>
+              {% if form.password_confirm.help_text %}
+                <small class="form-text text-muted">{{ form.password_confirm.help_text }}</small>
+              {% endif %}
+              {% for error in form.password_confirm.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-block btn-login-custom">Registrar</button>
+          </form>
+          <hr>
+          <p class="text-center mb-0">Já tem uma conta? <a href="{% url 'login' %}">Entre aqui</a>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}

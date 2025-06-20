@@ -1,33 +1,71 @@
 {% extends "base_generic.html" %}
+
+{% block title %}<title>Entrar - Sistema Syllabus</title>{% endblock %}
+
 {% block content %}
-  {% if form.errors %}
-    <p>Seu RA ou Senha estão incorretos. Por favor tente novamente.</p>
-  {% endif %}
+  <div class="row mt-4"> 
+    <div class="col-md-6 col-lg-5 login-form-compact"> {# Ajustado para md-6 e lg-5 #}
+      <div class="card">
+        <div class="card-header">
+          <h2 class="mb-0 text-center"><i class="fas fa-sign-in-alt mr-2"></i>Entrar no Sistema</h2>
+        </div>
+        <div class="card-body">
+          {% if form.errors %}
+            <div class="alert alert-danger" role="alert">
+              <p class="mb-0">Seu usuário ou senha estão incorretos. Por favor, tente novamente.</p>
+            </div>
+          {% endif %}
 
-  {% if next %}
-    {% if user.is_authenticated %}
-      <p>Seu cadastro não permite acesso a essa página. Para continuar,
-      por favor faça login com uma conta que permita o acesso.</p>
-    {% else %}
-      <p>Por favor faça login para acessar essa página.</p>
-    {% endif %}
-  {% endif %}
+          {% if next %}
+            {% if user.is_authenticated %}
+              <div class="alert alert-warning" role="alert">
+                <p class="mb-0">Sua conta não tem acesso a esta página. Para prosseguir,
+                por favor, entre com uma conta que tenha acesso.</p>
+              </div>
+            {% else %}
+              <div class="alert alert-info" role="alert">
+                <p class="mb-0 text-center">Por favor, faça login para ver esta página.</p>
+              </div>
+            {% endif %}
+          {% endif %}
 
-  <form method="post" action="{% url 'login' %}">
-    {% csrf_token %}
-    <table>
-      <tr>
-        <td>{{ form.username.label_tag }}</td>
-        <td>{{ form.username }}</td>
-      </tr>
-      <tr>
-        <td>{{ form.password.label_tag }}</td>
-        <td>{{ form.password }}</td>
-      </tr>
-    </table>
-    <input type="submit" value="login" />
-    <input type="hidden" name="next" value="{{ next }}" />
-  </form>
-  <p><a href="{% url 'register' %}">Não tem uma conta? Cadastre-se</a></p>
-  <p><a href="{% url 'password_reset' %}">Esqueceu a senha?</a></p>
+          <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            
+            <div class="form-group">
+              <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fas fa-user"></i></span>
+                </div>
+                {{ form.username }} {# O widget já tem a classe 'form-control' do CustomAuthenticationForm #}
+              </div>
+              {% for error in form.username.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                </div>
+                {{ form.password }} {# O widget já tem a classe 'form-control' do CustomAuthenticationForm #}
+              </div>
+              {% for error in form.password.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+            <input type="hidden" name="next" value="{{ next }}" />
+          </form>
+          <hr>
+          <p class="text-center mb-0">Não tem uma conta? <a href="{% url 'register' %}">Registre-se aqui</a>.</p>
+          {# <p class="text-center mt-2"><a href="{% url 'password_reset' %}">Esqueceu a senha?</a></p> #}
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}

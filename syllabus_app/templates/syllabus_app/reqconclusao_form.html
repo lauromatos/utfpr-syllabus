@@ -1,15 +1,63 @@
-
 {% extends "base_generic.html" %}
 
+{% block title %}
+  <title>
+    {% if object %}
+      Editar Requisitos de Conclusão - {{ object.nome_curso }}
+    {% else %}
+      Adicionar Novos Requisitos de Conclusão
+    {% endif %}
+    - Sistema Syllabus
+  </title>
+{% endblock %}
+
 {% block content %}
-<h1>Adicionar Requisitos de Conclusão de Curso</h1>
+  <div class="row mt-4">
+    <div class="col-md-8 col-lg-7">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="mb-0 text-center">
+            {% if object %}
+              <i class="fas fa-edit mr-2"></i>Editar Requisitos de Conclusão
+            {% else %}
+              <i class="fas fa-clipboard-check mr-2"></i>Adicionar Requisitos de Conclusão
+            {% endif %}
+          </h2>
+        </div>
+        <div class="card-body">
+          {% if form.errors %}
+            <div class="alert alert-danger" role="alert">
+              <p class="mb-1"><strong>Por favor, corrija os erros abaixo:</strong></p>
+              <ul class="mb-0">
+                {% for field_obj in form %}
+                  {% for error in field_obj.errors %}
+                    <li>{{ field_obj.label|capfirst }}: {{ error }}</li>
+                  {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                  <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
 
-<form action="" method="post">
-    {% csrf_token %}
-    <table>
-    {{ form.as_table }}
-    </table>
-    <input type="submit" value="Submit">
-
-</form>
+          <form action="" method="post">
+            {% csrf_token %}
+            {% for field in form %}
+              <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<small class="form-text text-muted">{{ field.help_text|safe }}</small>{% endif %}
+                {% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+              </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary btn-block btn-login-custom">
+              {% if object %}Salvar Alterações{% else %}Adicionar Requisitos{% endif %}
+            </button>
+            <a href="{% if object %}{{ object.get_absolute_url }}{% else %}{% url 'reqconclusao' %}{% endif %}" class="btn btn-outline-secondary btn-block mt-2">Cancelar</a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}
