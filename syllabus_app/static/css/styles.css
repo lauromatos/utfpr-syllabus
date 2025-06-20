@@ -50,13 +50,14 @@ body {
 
 .sidebar-nav li a {
   color: var(--text-dark); /* Cor de texto inspirada em text-dsGray-900/text-[#0D1117] */
-  padding: 8px 10px;
+  padding: 0.5rem 0.75rem; /* Ajustado para 8px vertical, 12px horizontal (similar aos forms compactos) */
   display: block;
   text-decoration: none;
   border-radius: 0.25rem;
   margin-bottom: 2px;
   border-left: 3px solid transparent; /* Para o efeito de borda no hover */
   transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out; /* Transição suave */
+  font-size: 0.875rem; /* Alinhado com o font-size dos labels e inputs dos forms compactos */
 }
 
 .sidebar-nav li a:hover {
