@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório de Conclusão - {{ aluno.nome_aluno }}</title>
+    <style>
+        @page { size: A4; margin: 1.5cm; }
+        body { font-family: "Helvetica", "Arial", sans-serif; font-size: 11pt; color: #333; }
+        h1, h2, h3 { font-weight: normal; }
+        h1 { font-size: 22pt; text-align: center; margin-bottom: 20px; }
+        h2 { font-size: 16pt; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-top: 25px; margin-bottom: 15px; }
+        h3 { font-size: 14pt; margin-top: 20px; margin-bottom: 10px; }
+        h4 { font-size: 12pt; }
+        ul { list-style-type: disc; padding-left: 20px; }
+        li { margin-bottom: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 10pt; }
+        th { background-color: #f2f2f2; font-weight: bold; }
+        .progress {
+            border: 1px solid #ccc;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            height: 20px;
+            width: 100%;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        .progress-bar {
+            background-color: #007bff; /* Cor azul para progresso concluído */
+            color: white;
+            text-align: center;
+            line-height: 20px;
+            height: 100%;
+            float: left; /* Permite que as barras fiquem lado a lado */
+        }
+        .progress-bar-danger {
+            background-color: #dc3545; /* Cor vermelha para o progresso faltante */
+            height: 100%;
+            float: left;
+            color: white;
+            text-align: center;
+            line-height: 20px;
+        }
+        .text-success { color: #28a745; }
+        .text-danger { color: #dc3545; }
+        .font-weight-bold { font-weight: bold; }
+        .header-info p { margin: 2px 0; }
+        .mb-3 { margin-bottom: 1rem; } /* Simula a classe mb-3 do Bootstrap */
+        .badge {
+            display: inline-block;
+            padding: .25em .4em;
+            font-size: 75%;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle; /* Melhora o alinhamento vertical com o texto */
+            border-radius: .25rem;
+            color: #fff;
+        }
+        .badge-success { background-color: #28a745; }
+        .badge-warning {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .status-icon { font-size: 14pt; }
+        .status-icon-success { color: #28a745; }
+        .status-icon-danger { color: #dc3545; }
+
+    </style>
+</head>
+<body>
+    <h1>Relatório de Conclusão de Curso</h1>
+    
+    <div class="header-info">
+        <p><strong>Aluno:</strong> {{ aluno.nome_aluno }}</p>
+        <p><strong>RA:</strong> {{ aluno.ra_aluno }}</p>
+        <p><strong>Curso:</strong> {{ aluno.nome_curso.nome_curso }}</p>
+    </div>
+
+    {% if requisitos_conclusao %}
+        <h2>Requisitos do Curso</h2>
+        <ul>
+            <li>Carga Horária Total: {{ requisitos_conclusao.ch_total }}h</li>
+            <li>Carga Horária Obrigatória: {{ requisitos_conclusao.ch_obrigatorias }}h</li>
+            <li>Carga Horária Optativa: {{ requisitos_conclusao.ch_optativas }}h</li>
+            <li>Carga Horária Estágio: {{ requisitos_conclusao.ch_estagio }}h</li>
+            <li>Carga Horária Extensionista: {{ requisitos_conclusao.ch_extensionista }}h</li>
+        </ul>
+
+        <h2>Progresso do Aluno</h2>
+        <div class="mb-3">
+          <strong>Carga Horária Obrigatória:</strong> {{ ch_obrigatorias_cursadas }} / {{ requisitos_conclusao.ch_obrigatorias }}h
+          {% if requisitos_conclusao.ch_obrigatorias > 0 %}<div class="progress" style="font-size: 10pt;">
+            {% widthratio ch_obrigatorias_cursadas requisitos_conclusao.ch_obrigatorias 100 as progress_percent %}
+            <div class="progress-bar" style="width: {{ progress_percent }}%;">{{ progress_percent|floatformat:0 }}%</div>
+            {% if faltam_obrigatorias > 0 %}{% widthratio faltam_obrigatorias requisitos_conclusao.ch_obrigatorias 100 as percent_faltante_obrig %}
+              <div class="progress-bar-danger" style="width: {{ percent_faltante_obrig }}%;">{{ percent_faltante_obrig|floatformat:0 }}%</div>
+            {% endif %}
+          </div>{% endif %}
+        </div>
+        <div class="mb-3">
+          <strong>Carga Horária Optativa:</strong> {{ ch_optativas_cursadas }} / {{ requisitos_conclusao.ch_optativas }}h
+          {% if requisitos_conclusao.ch_optativas > 0 %}<div class="progress" style="font-size: 10pt;">
+            {% widthratio ch_optativas_cursadas requisitos_conclusao.ch_optativas 100 as progress_percent_opt %}
+            <div class="progress-bar" style="width: {{ progress_percent_opt }}%;">{{ progress_percent_opt|floatformat:0 }}%</div>
+            {% if faltam_optativas > 0 %}{% widthratio faltam_optativas requisitos_conclusao.ch_optativas 100 as percent_faltante_opt %}
+              <div class="progress-bar-danger" style="width: {{ percent_faltante_opt }}%;">{{ percent_faltante_opt|floatformat:0 }}%</div>
+            {% endif %}
+          </div>{% endif %}
+        </div>
+        <div class="mb-3">
+          <strong>Carga Horária Extensionista:</strong> {{ ch_extensionista_cursada }} / {{ requisitos_conclusao.ch_extensionista }}h
+          {% if requisitos_conclusao.ch_extensionista > 0 %}<div class="progress" style="font-size: 10pt;">
+            {% widthratio ch_extensionista_cursada requisitos_conclusao.ch_extensionista 100 as progress_percent_ext %}
+            <div class="progress-bar" style="width: {{ progress_percent_ext }}%;">{{ progress_percent_ext|floatformat:0 }}%</div>
+            {% if faltam_extensionista > 0 %}{% widthratio faltam_extensionista requisitos_conclusao.ch_extensionista 100 as percent_faltante_ext %}
+              <div class="progress-bar-danger" style="width: {{ percent_faltante_ext }}%;">{{ percent_faltante_ext|floatformat:0 }}%</div>
+            {% endif %}
+          </div>{% endif %}
+        </div>
+
+        <h2>Resumo de Trilhas Optativas</h2>
+        <ul>
+          {% for resumo in resumo_trilhas %}
+            <li>
+              {% if resumo.concluida %}
+                <span class="status-icon status-icon-success">&#10003;</span>
+              {% else %}
+                <span class="status-icon status-icon-danger">&#10007;</span>
+              {% endif %}
+              {{ resumo.nome }}
+            </li>
+          {% endfor %}
+        </ul>
+
+        <h2>Disciplinas Optativas Cursadas (Total: {{ cursadas_optativas|length }})</h2>
+        {% if trilhas_info or isolated_optativas %}
+          {% for trilha in trilhas_info %}
+            <h3>
+              {{ trilha.nome }} ({{ trilha.horas }}h)
+              {% if trilha.concluida %}
+                <span class="badge badge-success">Trilha Concluída</span>
+              {% else %}
+                <span class="badge badge-warning">Faltam {{ trilha.faltam }}h</span>
+              {% endif %}
+            </h3>
+            <ul>
+              {% for disciplina in trilha.disciplinas %}
+                <li>{{ disciplina.cod_disciplina }} - {{ disciplina.nome_disciplina }} ({{ disciplina.carga_horaria }}h)</li>
+              {% endfor %}
+            </ul>
+          {% endfor %}
+
+          {% if isolated_optativas %}
+            <h3>Optativas Isoladas (Sem Trilha Específica)</h3>
+            <ul>
+              {% for disciplina in isolated_optativas %}
+                <li>{{ disciplina.cod_disciplina }} - {{ disciplina.nome_disciplina }} ({{ disciplina.carga_horaria }}h)</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% else %}
+          <p>Nenhuma disciplina optativa cursada.</p>
+        {% endif %}
+
+        <h2>
+          Disciplinas Extensionistas Cursadas ({{ cursadas_extensionistas|length }})
+          {% if requisitos_conclusao.ch_extensionista > 0 %}
+            {% if extensionista_concluida %}
+              <span class="badge badge-success" style="font-size: 65%;">Requisito Concluído</span>
+            {% else %}
+              <span class="badge badge-warning" style="font-size: 65%;">Faltam {{ faltam_extensionista }}h</span>
+            {% endif %}
+          {% endif %}
+        </h2>
+        {% if cursadas_extensionistas %}
+            <ul>
+              {% for disciplina in cursadas_extensionistas %}
+                <li>{{ disciplina.cod_disciplina }} - {{ disciplina.nome_disciplina }} ({{ disciplina.carga_horaria }}h)</li>
+              {% endfor %}
+            </ul>
+        {% else %}
+          <p>Nenhuma disciplina extensionista cursada.</p>
+        {% endif %}
+
+        <h2>Disciplinas Obrigatórias Pendentes ({{ obrigatorias_faltantes|length }})</h2>
+        {% if obrigatorias_faltantes %}
+            <table>
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Nome</th>
+                  <th>Período</th>
+                  <th>C.H.</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for disciplina in obrigatorias_faltantes %}
+                  <tr>
+                    <td>{{ disciplina.cod_disciplina }}</td>
+                    <td>{{ disciplina.nome_disciplina }}</td>
+                    <td>{{ disciplina.periodo }}º</td>
+                    <td>{{ disciplina.carga_horaria }}h</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+        {% else %}
+            <p class="text-success font-weight-bold">Parabéns! Todas as disciplinas obrigatórias foram concluídas.</p>
+        {% endif %}
+
+        <h2>Resultado Final</h2>
+        <p class="{% if apto_a_concluir %}text-success{% else %}text-danger{% endif %} font-weight-bold">{{ mensagem_status }}</p>
+        {% if not apto_a_concluir and mensagens_pendencias %}
+          <ul>
+            {% for pendencia in mensagens_pendencias %}
+              <li class="text-danger">{{ pendencia }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+
+    {% else %}
+        <p>Os requisitos de conclusão para o curso {{ aluno.nome_curso.nome_curso }} não foram definidos no sistema.</p>
+    {% endif %}
+</body>
+</html>

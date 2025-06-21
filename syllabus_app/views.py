@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from syllabus_app.models import Aluno, Departamento, Curso, ConjuntoDisciplinas, Disciplina, DisciplinasCursadas, ReqConclusao
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login # type: ignore
 from .forms import UserRegistrationForm, ReqConclusaoForm
@@ -392,37 +393,280 @@ class ReqConclusaoDelete(PermissionRequiredMixin, DeleteView):
 from django.shortcuts import render
 from .models import Aluno, DisciplinasCursadas, ConjuntoDisciplinas, ReqConclusao
 from django.contrib.auth.models import User
+from collections import defaultdict
 
-@login_required
-def verificar_conclusao_curso(request, aluno_id):
+def _get_verificacao_conclusao_context(aluno_id):
+    """Função auxiliar para buscar e calcular todos os dados para o relatório de conclusão."""
     aluno_obj = get_object_or_404(Aluno, id=aluno_id)
 
-    disciplinas_aluno_cursou_objs = [
-        dc.cod_disciplina for dc in DisciplinasCursadas.objects.filter(
-            ra_aluno=aluno_obj.user
-        ).select_related('cod_disciplina')
-    ]
+    # Obter todas as disciplinas que o aluno cursou
+    disciplinas_cursadas_qs = DisciplinasCursadas.objects.filter(
+        ra_aluno=aluno_obj.user
+    ).select_related('cod_disciplina', 'cod_disciplina__cod_optativa')
+    
+    disciplinas_aluno_cursou_objs = [dc.cod_disciplina for dc in disciplinas_cursadas_qs]
+    
+    # Cria uma lista separada para as disciplinas extensionistas cursadas
+    cursadas_extensionistas = [d for d in disciplinas_aluno_cursou_objs if d.extensionista]
 
-    cursadas_obrigatorias = [d for d in disciplinas_aluno_cursou_objs if d.obrigatoria]
-    cursadas_optativas = [d for d in disciplinas_aluno_cursou_objs if not d.obrigatoria]
+    # Obter IDs das disciplinas cursadas para um filtro eficiente
+    disciplinas_cursadas_ids = {dc.cod_disciplina_id for dc in disciplinas_cursadas_qs}
+
+    # Lógica definitiva para identificar disciplinas obrigatórias via conjunto '0000'
+    try:
+        conjunto_obrigatorio = ConjuntoDisciplinas.objects.get(cod_optativa='0000')
+    except ConjuntoDisciplinas.DoesNotExist:
+        # Se o conjunto '0000' não existe no banco, nenhuma disciplina pode ser obrigatória por esta regra.
+        conjunto_obrigatorio = None
+
+    if conjunto_obrigatorio:
+        todas_obrigatorias_do_curso = Disciplina.objects.filter(
+            # REMOVIDO: O filtro 'curso' estava impedindo a localização das disciplinas.
+            # A lógica agora assume que se uma disciplina está no conjunto '0000',
+            # ela é uma candidata a obrigatória para qualquer curso.
+            cod_optativa=conjunto_obrigatorio
+        ).order_by('periodo', 'nome_disciplina')
+    else:
+        todas_obrigatorias_do_curso = Disciplina.objects.none()
+
+    # Determinar quais disciplinas obrigatórias estão faltando
+    obrigatorias_faltantes = todas_obrigatorias_do_curso.exclude(id__in=disciplinas_cursadas_ids)
     
+    # Particionar as disciplinas cursadas usando a mesma lógica do conjunto '0000'
+    cursadas_obrigatorias = []
+    cursadas_optativas = []
+    for d in disciplinas_aluno_cursou_objs:
+        # A verificação d.cod_optativa_id é mais eficiente e segura
+        if conjunto_obrigatorio and d.cod_optativa_id == conjunto_obrigatorio.id:
+            cursadas_obrigatorias.append(d)
+        else:
+            cursadas_optativas.append(d)
+    
+    # --- Cálculos de Carga Horária ---
     ch_obrigatorias_cursadas = sum(int(d.carga_horaria) for d in cursadas_obrigatorias if d.carga_horaria.isdigit())
-    ch_optativas_cursadas = sum(int(d.carga_horaria) for d in cursadas_optativas if d.carga_horaria.isdigit())
-    
+
+    # Processar optativas de forma mais eficiente (um loop)
+    _trilhas_data_map = defaultdict(lambda: {'hours': 0, 'disciplines': [], 'conjunto': None})
+    isolated_optativas = [] # Para optativas que não pertencem a nenhum conjunto específico
+
+    for disciplina in cursadas_optativas:
+        try:
+            ch = int(disciplina.carga_horaria)
+        except (ValueError, TypeError):
+            continue  # Ignora disciplinas com carga horária inválida
+
+        if disciplina.cod_optativa:
+            nome_trilha = disciplina.cod_optativa.nome_conjunto
+            # Se a disciplina tem um conjunto optativo, adicione-a à trilha correspondente
+            _trilhas_data_map[nome_trilha]['hours'] += ch
+            _trilhas_data_map[nome_trilha]['disciplines'].append(disciplina)
+            _trilhas_data_map[nome_trilha]['conjunto'] = disciplina.cod_optativa
+        else:
+            # Se a disciplina não tem um conjunto optativo, é uma optativa isolada
+            isolated_optativas.append(disciplina)
+
+    # Recalcula as horas optativas e de humanidades, aplicando os limites
+    ch_optativas_cursadas = 0
+    ch_humanidades_cursadas = 0
+
+    for data in _trilhas_data_map.values():
+        conjunto = data['conjunto']
+        horas_reais = data['hours']
+        
+        if conjunto.limitar_carga_horaria:
+            horas_contabilizadas = min(horas_reais, int(conjunto.ch_obrigatoria))
+        else:
+            horas_contabilizadas = horas_reais
+        
+        ch_optativas_cursadas += horas_contabilizadas
+
+        if "humanidades" in conjunto.nome_conjunto.lower():
+            ch_humanidades_cursadas = horas_contabilizadas
+
+    # Adiciona as horas das optativas isoladas, que não têm limite
+    ch_optativas_cursadas += sum(int(d.carga_horaria) for d in isolated_optativas if d.carga_horaria.isdigit())
+
+    # Calcular carga horária extensionista
+    ch_extensionista_cursada = sum(int(d.carga_horaria) for d in disciplinas_aluno_cursou_objs if d.extensionista and d.carga_horaria.isdigit())
+
     try:
         requisitos_conclusao = ReqConclusao.objects.get(nome_curso=aluno_obj.nome_curso)
     except ReqConclusao.DoesNotExist:
         requisitos_conclusao = None
 
-    return render(request, 'syllabus_app/verificar_conclusao.html', {
+    # Lógica de verificação dos requisitos
+    apto_a_concluir = True
+    mensagens_pendencias = []
+
+    # Calcula as horas faltantes para exibição no template
+    faltam_obrigatorias = 0
+    faltam_optativas = 0
+    faltam_extensionista = 0
+    extensionista_concluida = False
+    if requisitos_conclusao:
+        if ch_obrigatorias_cursadas < requisitos_conclusao.ch_obrigatorias:
+            faltam_obrigatorias = requisitos_conclusao.ch_obrigatorias - ch_obrigatorias_cursadas
+        if ch_optativas_cursadas < requisitos_conclusao.ch_optativas:
+            faltam_optativas = requisitos_conclusao.ch_optativas - ch_optativas_cursadas
+        if ch_extensionista_cursada < requisitos_conclusao.ch_extensionista:
+            faltam_extensionista = requisitos_conclusao.ch_extensionista - ch_extensionista_cursada
+        
+        if requisitos_conclusao.ch_extensionista > 0:
+            extensionista_concluida = ch_extensionista_cursada >= requisitos_conclusao.ch_extensionista
+
+    if requisitos_conclusao:
+        total_cursado = ch_obrigatorias_cursadas + ch_optativas_cursadas
+        if total_cursado < requisitos_conclusao.ch_total:
+            apto_a_concluir = False
+            faltam = requisitos_conclusao.ch_total - total_cursado
+            mensagens_pendencias.append(f"Carga horária total insuficiente (faltam {faltam}h).")
+
+        if ch_obrigatorias_cursadas < requisitos_conclusao.ch_obrigatorias:
+            apto_a_concluir = False
+            faltam = requisitos_conclusao.ch_obrigatorias - ch_obrigatorias_cursadas
+            mensagens_pendencias.append(f"Carga horária obrigatória insuficiente (faltam {faltam}h).")
+
+        if ch_optativas_cursadas < requisitos_conclusao.ch_optativas:
+            apto_a_concluir = False
+            # A variável `faltam_optativas` já foi calculada anteriormente.
+            mensagens_pendencias.append(f"Carga horária optativa insuficiente (faltam {faltam_optativas}h).")
+
+        trilhas_hours_only = {name: data['hours'] for name, data in _trilhas_data_map.items()}
+        # Verificar trilhas
+        trilhas_ok = False
+        trilhas_validas = [ch for ch in trilhas_hours_only.values() if ch >= 90]
+        if len(trilhas_validas) >= 3:
+            trilhas_ok = True
+        elif len(trilhas_validas) >= 2 and ch_optativas_cursadas >= requisitos_conclusao.ch_optativas:
+            trilhas_ok = True
+
+        if not trilhas_ok:
+            apto_a_concluir = False
+            mensagens_pendencias.append("Requisitos de trilhas não atendidos (3 Trilhas (ou 2 Trilhas e Optativas Isoladas) + Ciclo de Humanidades).")
+
+        if ch_extensionista_cursada < requisitos_conclusao.ch_extensionista:
+            apto_a_concluir = False
+            faltam = requisitos_conclusao.ch_extensionista - ch_extensionista_cursada
+            mensagens_pendencias.append(f"Carga horária extensionista insuficiente (faltam {faltam}h).")
+    else:
+        apto_a_concluir = False
+        mensagens_pendencias.append("Requisitos de conclusão não definidos para este curso.")
+    
+    mensagem_status = "Parabéns! Você cumpriu todos os requisitos para a conclusão do curso." if apto_a_concluir else "Existem pendências para a conclusão do curso. Veja abaixo:"
+
+    # --- Preparação dos dados para o template ---
+    MIN_HORAS_TRILHA = 90
+
+    # 1. Prepara a lista detalhada de trilhas cursadas
+    trilhas_info_list = []
+    for name, data in _trilhas_data_map.items():
+        horas_cursadas = data['hours']
+        concluida = horas_cursadas >= MIN_HORAS_TRILHA
+        faltam = MIN_HORAS_TRILHA - horas_cursadas if not concluida else 0
+        trilhas_info_list.append({
+            'nome': name,
+            'horas': horas_cursadas,
+            'disciplinas': data['disciplines'],
+            'concluida': concluida,
+            'faltam': faltam,
+        })
+
+    trilhas_info = sorted(
+        trilhas_info_list,
+        key=lambda x: x['nome']
+    )
+
+    # 2. Prepara a lista de resumo de trilhas para o topo da página
+    resumo_trilhas = []
+    outras_trilhas_cursadas = [t for t in trilhas_info if "humanidades" not in t['nome'].lower()]
+    
+    # Adiciona o Ciclo de Humanidades
+    humanidades = next((t for t in trilhas_info if "humanidades" in t['nome'].lower()), None)
+    resumo_trilhas.append({
+        'nome': 'Ciclo de Humanidades',
+        'concluida': humanidades['concluida'] if humanidades else False
+    })
+
+    # Adiciona as outras trilhas cursadas e preenche com placeholders
+    for i in range(3):
+        if i < len(outras_trilhas_cursadas):
+            resumo_trilhas.append(outras_trilhas_cursadas[i])
+        else:
+            resumo_trilhas.append({'nome': f'Trilha Optativa {i+1}', 'concluida': False})
+
+    return {
         'aluno': aluno_obj,
         'disciplinas_cursadas_objs': disciplinas_aluno_cursou_objs,
         'cursadas_obrigatorias': cursadas_obrigatorias,
         'cursadas_optativas': cursadas_optativas,
+        'obrigatorias_faltantes': obrigatorias_faltantes,
+        'cursadas_extensionistas': cursadas_extensionistas,
+        'trilhas_info': trilhas_info,
+        'resumo_trilhas': resumo_trilhas, # Nova lista de resumo
+        'isolated_optativas': isolated_optativas, # Optativas que não pertencem a nenhuma trilha
+        'ch_humanidades_cursadas': ch_humanidades_cursadas,
+        'ch_extensionista_cursada': ch_extensionista_cursada,
         'ch_obrigatorias_cursadas': ch_obrigatorias_cursadas,
         'ch_optativas_cursadas': ch_optativas_cursadas,
+        'faltam_obrigatorias': faltam_obrigatorias,
+        'faltam_optativas': faltam_optativas,
+        'faltam_extensionista': faltam_extensionista,
+        'extensionista_concluida': extensionista_concluida,
         'requisitos_conclusao': requisitos_conclusao,
-    })
+        'apto_a_concluir': apto_a_concluir,
+        'mensagem_status': mensagem_status,
+        'mensagens_pendencias': mensagens_pendencias,
+    }
+
+@login_required
+def verificar_conclusao_curso(request, aluno_id):
+    """Exibe a página de verificação de conclusão do curso."""
+    context = _get_verificacao_conclusao_context(aluno_id)
+
+    # Paginação para Disciplinas Obrigatórias Cursadas
+    cursadas_list = context['cursadas_obrigatorias']
+    paginator_cursadas = Paginator(cursadas_list, 10) # 10 por página
+    page_cursadas_num = request.GET.get('page_cursadas')
+    try:
+        cursadas_paginadas = paginator_cursadas.page(page_cursadas_num)
+    except PageNotAnInteger:
+        cursadas_paginadas = paginator_cursadas.page(1)
+    except EmptyPage:
+        cursadas_paginadas = paginator_cursadas.page(paginator_cursadas.num_pages)
+
+    # Paginação para Disciplinas Obrigatórias Pendentes
+    pendentes_list = context['obrigatorias_faltantes']
+    paginator_pendentes = Paginator(pendentes_list, 10) # 10 por página
+    page_pendentes_num = request.GET.get('page_pendentes')
+    try:
+        pendentes_paginadas = paginator_pendentes.page(page_pendentes_num)
+    except PageNotAnInteger:
+        pendentes_paginadas = paginator_pendentes.page(1)
+    except EmptyPage:
+        pendentes_paginadas = paginator_pendentes.page(paginator_pendentes.num_pages)
+
+    context['cursadas_obrigatorias_paginadas'] = cursadas_paginadas
+    context['obrigatorias_faltantes_paginadas'] = pendentes_paginadas
+
+    return render(request, 'syllabus_app/verificar_conclusao.html', context)
+
+@login_required
+def gerar_relatorio_pdf(request, aluno_id):
+    """Gera e retorna um relatório de conclusão em formato PDF."""
+    from django.template.loader import render_to_string
+    from django.http import HttpResponse
+    try:
+        from weasyprint import HTML
+    except ImportError:
+        messages.error(request, "A exportação para PDF não está disponível. A biblioteca WeasyPrint não foi encontrada.")
+        return redirect('verificar_conclusao_curso', aluno_id=aluno_id)
+
+    context = _get_verificacao_conclusao_context(aluno_id)
+    html_string = render_to_string('syllabus_app/verificar_conclusao_pdf.html', context)
+    pdf_file = HTML(string=html_string, base_url=request.build_absolute_uri('/')).write_pdf()
+    response = HttpResponse(pdf_file, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="relatorio_conclusao_{context["aluno"].ra_aluno}.pdf"'
+    return response
 
 class AlunoAdicionaDisciplinaView(LoginRequiredMixin, DisciplinaAdderMixin, generic.FormView):
     form_class = AlunoAdicionaDisciplinaForm

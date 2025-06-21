@@ -161,9 +161,12 @@ class DisciplinasCursadasForm(forms.ModelForm): # Esta é a definição que ser�
 class ConjuntoDisciplinasForm(forms.ModelForm):
     class Meta:
         model = ConjuntoDisciplinas 
-        fields = ['cod_optativa', 'nome_conjunto', 'ch_obrigatoria']
+        fields = ['cod_optativa', 'nome_conjunto', 'ch_obrigatoria', 'limitar_carga_horaria']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for visible in self.visible_fields():
-            visible.field.widget.attrs['class'] = 'form-control'
+        for field_name, field in self.fields.items():
+            if not isinstance(field.widget, (forms.CheckboxInput, forms.RadioSelect)):
+                field.widget.attrs['class'] = 'form-control'
+            elif isinstance(field.widget, forms.CheckboxInput):
+                field.widget.attrs['class'] = 'form-check-input'

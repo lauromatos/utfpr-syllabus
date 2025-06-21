@@ -46,9 +46,14 @@ class Curso(models.Model):
         return self.nome_curso
 
 class ConjuntoDisciplinas(models.Model):
-    cod_optativa = models.CharField(max_length=4, help_text='Digite o nome do curso')
-    nome_conjunto = models.CharField(max_length=45, help_text='Digite o nome do curso')
-    ch_obrigatoria = models.DecimalField(max_digits=4, decimal_places=0, help_text='Digite o nome do curso')
+    cod_optativa = models.CharField(max_length=4, help_text='Código do conjunto de disciplinas (Ex: 0001)')
+    nome_conjunto = models.CharField(max_length=45, help_text='Nome do conjunto (Ex: Ciclo de Humanidades)')
+    ch_obrigatoria = models.DecimalField(max_digits=4, decimal_places=0, help_text='Carga horária obrigatória ou máxima para este conjunto.')
+    limitar_carga_horaria = models.BooleanField(
+        default=False,
+        verbose_name="Limitar Carga Horária",
+        help_text='Se marcado, a carga horária deste conjunto será limitada ao valor acima no cálculo geral de horas optativas.'
+    )
 
     class Meta:
         ordering = ['cod_optativa', 'nome_conjunto']
