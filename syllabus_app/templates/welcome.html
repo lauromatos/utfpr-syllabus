@@ -3,15 +3,23 @@
 {% block title %}<title>Bem-vindo ao Sistema Syllabus</title>{% endblock %}
 
 {% block content %}
-  <div class="jumbotron">
-    <h1 class="display-4">Bem-vindos ao Sistema Syllabus da UTFPR!</h1>
-    <p class="lead">Este sistema ajuda você a gerenciar seu progresso acadêmico, verificar requisitos de conclusão e muito mais.</p>
-    <hr class="my-4">
-    <p>Para acessar todas as funcionalidades, por favor, faça o login ou registre-se.</p>
-    <a class="btn btn-primary btn-lg mr-2" href="{% url 'login' %}" role="button">Entrar</a>
-    <a class="btn btn-secondary btn-lg" href="{% url 'register' %}" role="button">Registrar Novo Aluno</a>
+<div class="row mt-4">
+  <div class="col-lg-10">
+    <div class="card">
+      <div class="card-header">
+        <h2 class="mb-0 text-center">
+          <i class="fas fa-door-open mr-2"></i>Bem-vindo!
+        </h2>
+      </div>
+      <div class="card-body text-center">
+        <h4 class="card-title">Sistema Syllabus da UTFPR</h4>
+        <p class="card-text">Este sistema ajuda você a gerenciar seu progresso acadêmico, verificar requisitos de conclusão e muito mais.</p>
+        <hr>
+        <p>Para acessar todas as funcionalidades, por favor, faça o login ou registre-se.</p>
+        <a class="btn btn-primary btn-lg mr-2" href="{% url 'login' %}" role="button"><i class="fas fa-sign-in-alt mr-2"></i>Entrar</a>
+        <a class="btn btn-secondary btn-lg" href="{% url 'register' %}" role="button"><i class="fas fa-user-plus mr-2"></i>Registrar</a>
+      </div>
+    </div>
   </div>
-
-  {# Você pode adicionar mais informações aqui, como links para guias, notícias, etc. #}
-
+</div>
 {% endblock %}

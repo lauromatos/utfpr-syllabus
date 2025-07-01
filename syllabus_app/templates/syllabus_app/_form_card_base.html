@@ -59,6 +59,7 @@
             <button type="submit" class="btn btn-primary btn-block btn-login-custom">{% block form_submit_button_text %}{% endblock %}</button>
             <a href="{% block form_cancel_url %}{% endblock %}" class="btn btn-outline-secondary btn-block mt-2">Cancelar</a>
           </form>
+          {% block after_form %}{% endblock %}
         </div>
       </div>
     </div>

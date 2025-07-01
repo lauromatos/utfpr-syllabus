@@ -11,7 +11,7 @@
     <link href="{% static 'css/styles.css' %}" rel="stylesheet">
   </head>
   <body>
-    <header class="site-header py-3 mb-4">
+    <header class="navbar navbar-light bg-white border-bottom shadow-sm mb-4">
       <div class="container">
         <a href="{% url 'index' %}" class="navbar-brand d-flex align-items-center">
           <img src="{% static 'images/utfpr_logo.png' %}" alt="UTFPR Logo" class="mr-3" style="height:40px;">
@@ -35,12 +35,7 @@
               {# adicione o link aqui. Ex: #}
               {# {% if not user.is_staff %}<li class="nav-item"><a class="nav-link" href="{% url 'curso' %}">Cursos Cadastrados</a></li>{% endif %} #}
               {# No momento, "Cursos Cadastrados" está no bloco user.is_staff abaixo. #}
-              
               <li class="nav-item"><a class="nav-link" href="{% url 'disciplinascursadas' %}"><i class="fas fa-tasks mr-2"></i>Minhas Disciplinas</a></li>
-              {# Link para o aluno adicionar suas próprias disciplinas cursadas #}
-              {% if user.aluno %}
-                <li class="nav-item"><a class="nav-link" href="{% url 'aluno_adiciona_disciplina' %}"><i class="fas fa-plus-circle mr-2"></i>Adicionar Minhas Disciplinas</a></li>
-              {% endif %}
 
               {% if perms.syllabus_app.add_disciplinascursadas %}
                 {# Este link para 'disciplinascursadas-create' é uma ação administrativa #}
@@ -104,8 +99,8 @@
     </div>
   </body>
   {% block footer %}
-  <footer class="footer mt-auto py-3 bg-light text-center">
-    <div class="container"><span class="text-muted">© {% now "Y" %} Sistema Syllabus UTFPR. Todos os direitos reservados.</span></div>
+  <footer class="footer mt-auto py-3 bg-light">
+    <div class="container text-center"><span class="text-muted">© {% now "Y" %} Sistema Syllabus UTFPR. Todos os direitos reservados.</span></div>
   </footer>
   {% endblock %}
 </html>

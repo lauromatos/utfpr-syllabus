@@ -1,66 +1,77 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <div class="mb-3">
-    <div class="d-flex align-items-baseline">
-      <h1 class="mb-0 mr-2">Disciplinas Cursadas</h1>
-      {% if aluno %}
-        <span class="lead"> - {{ aluno.nome_aluno }} (RA: {{ aluno.ra_aluno }})</span>
-      {% elif user.aluno %}
-        <span class="lead"> - Aluno: {{ user.aluno.nome_aluno }} (RA: {{ user.aluno.ra_aluno }})</span>
-      {% endif %}
+<div class="row mt-4">
+  <div class="col-lg-10">
+    <div class="card">
+      <div class="card-header">
+        <h2 class="mb-0 text-center">
+          <i class="fas fa-tasks mr-2"></i>Minhas Disciplinas Cursadas
+        </h2>
+      </div>
+      <div class="card-body">
+        {% if aluno %}
+          <p class="text-center lead"><strong>Aluno:</strong> {{ aluno.nome_aluno }} (RA: {{ aluno.ra_aluno }})</p>
+        {% elif user.aluno %}
+          <p class="text-center lead"><strong>Aluno:</strong> {{ user.aluno.nome_aluno }} (RA: {{ user.aluno.ra_aluno }})</p>
+        {% endif %}
+        <hr>
+
+        {% if user.aluno and user.aluno.id %}
+          <div class="mb-4 text-center">
+            <a href="{% url 'aluno_adiciona_disciplina' %}" class="btn btn-primary"><i class="fas fa-plus-circle mr-2"></i>Adicionar Nova Disciplina Cursada</a>
+          </div>
+        {% endif %}
+
+        {% if not aluno and user.is_authenticated and not user.is_staff and not user.is_superuser %}
+          {# Usuário logado, não é admin/staff, mas não tem perfil Aluno. #}
+          <p class="text-danger text-center">Informações do perfil de aluno não encontradas. Se você é um aluno, por favor, contate o suporte.</p>
+        {% elif not user.is_authenticated %}
+            <p class="text-center">Por favor, faça login para ver suas disciplinas.</p>
+        {% endif %}
+
+        {% if object_list %}
+          <ul class="list-group">
+            {% for dc in object_list %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>
+                  <strong>{{ dc.cod_disciplina.nome_disciplina }}</strong> ({{ dc.cod_disciplina.cod_disciplina }})
+                </span>
+                <a href="{% url 'aluno_remove_disciplina' pk=dc.pk %}" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></a>
+              </li>
+            {% endfor %}
+          </ul>
+
+          {% if is_paginated %}
+            <div class="pagination mt-3">
+              <span class="page-links">
+                {% if page_obj.has_previous %}
+                  <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline-secondary btn-sm">Anterior</a>
+                {% endif %}
+                <span class="page-current mx-2">
+                  Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+                </span>
+                {% if page_obj.has_next %}
+                  <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline-secondary btn-sm">Próxima</a>
+                {% endif %}
+              </span>
+            </div>
+          {% endif %}
+        {% else %}
+          {% if aluno or user.is_staff or user.is_superuser %} {# Se for aluno ou admin/staff e não tiver disciplinas #}
+            <p class="text-center">Nenhuma disciplina cursada encontrada.</p>
+          {% elif user.is_authenticated and not user.aluno %}
+              {# Mensagem para usuário autenticado mas sem perfil de aluno já foi tratada acima, aqui apenas para garantir que não caia em um "else" vazio #}
+          {% elif not user.is_authenticated %}
+              <p class="text-center">Por favor, faça login para ver suas disciplinas.</p>
+          {% endif %}
+        {% endif %}
+
+        <div class="mt-4 text-center">
+          <a href="{% url 'index' %}" class="btn btn-secondary">Voltar para a página inicial</a>
+        </div>
+      </div>
     </div>
-
-    {% if user.aluno and user.aluno.id %}
-      <div class="mb-3 mt-2">
-        <a href="{% url 'aluno_adiciona_disciplina' %}" class="btn btn-primary">Adicionar Disciplina Cursada</a>
-      </div>
-    {% endif %}
   </div>
-
-  {% if not aluno and user.is_authenticated and not user.is_staff and not user.is_superuser %}
-    {# Usuário logado, não é admin/staff, mas não tem perfil Aluno. #}
-    <p class="text-danger">Informações do perfil de aluno não encontradas. Se você é um aluno, por favor, contate o suporte.</p>
-  {% elif not user.is_authenticated %}
-      <p>Por favor, faça login para ver suas disciplinas.</p>
-  {% endif %}
-
-  {% if object_list %}
-    <ul class="list-group">
-      {% for dc in object_list %}
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          <span>
-            <strong>{{ dc.cod_disciplina.nome_disciplina }}</strong> ({{ dc.cod_disciplina.cod_disciplina }})
-          </span>
-          <a href="{% url 'aluno_remove_disciplina' pk=dc.pk %}" class="btn btn-danger btn-sm">Remover</a>
-        </li>
-      {% endfor %}
-    </ul>
-
-    {% if is_paginated %}
-      <div class="pagination mt-3">
-        <span class="page-links">
-          {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline-secondary btn-sm">Anterior</a>
-          {% endif %}
-          <span class="page-current mx-2">
-            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
-          </span>
-          {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline-secondary btn-sm">Próxima</a>
-          {% endif %}
-        </span>
-      </div>
-    {% endif %}
-  {% else %}
-    {% if aluno or user.is_staff or user.is_superuser %} {# Se for aluno ou admin/staff e não tiver disciplinas #}
-      <p>Nenhuma disciplina cursada encontrada.</p>
-    {% elif user.is_authenticated and not user.aluno %}
-        {# Mensagem para usuário autenticado mas sem perfil de aluno já foi tratada acima, aqui apenas para garantir que não caia em um "else" vazio #}
-    {% elif not user.is_authenticated %}
-        <p>Por favor, faça login para ver suas disciplinas.</p>
-    {% endif %}
-  {% endif %}
-
-  <p><a href="{% url 'index' %}">Voltar para a página inicial</a></p>
+</div>
 {% endblock %}

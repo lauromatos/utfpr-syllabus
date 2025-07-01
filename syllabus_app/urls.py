@@ -51,8 +51,8 @@ urlpatterns = [
     path('reqconclusao/create/', views.ReqConclusaoCreate.as_view(), name='reqconclusao-create'),
     path('reqconclusao/<int:pk>/update/', views.ReqConclusaoUpdate.as_view(), name='reqconclusao-update'),
     path('reqconclusao/<int:pk>/delete/', views.ReqConclusaoDelete.as_view(), name='reqconclusao-delete'),
-]
 
-urlpatterns += [
+    # URLs for Verificação de Conclusão e Relatório PDF
     path('verificarconclusao/<int:aluno_id>/', views.verificar_conclusao_curso, name='verificar_conclusao_curso'),
+    path('verificarconclusao/<int:aluno_id>/pdf/', views.gerar_relatorio_pdf, name='gerar-relatorio-pdf'),
 ]
