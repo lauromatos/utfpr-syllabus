@@ -577,22 +577,35 @@ def _get_verificacao_conclusao_context(aluno_id):
     )
 
     # 2. Prepara a lista de resumo de trilhas para o topo da página
-    resumo_trilhas = []
+    resumo_trilhas = []    
+    # Separa as trilhas de humanidades das outras
+    humanidades_cursadas = next((t for t in trilhas_info if "humanidades" in t['nome'].lower()), None)
     outras_trilhas_cursadas = [t for t in trilhas_info if "humanidades" not in t['nome'].lower()]
-    
-    # Adiciona o Ciclo de Humanidades
-    humanidades = next((t for t in trilhas_info if "humanidades" in t['nome'].lower()), None)
+
+    # Adiciona o Ciclo de Humanidades, sempre
     resumo_trilhas.append({
         'nome': 'Ciclo de Humanidades',
-        'concluida': humanidades['concluida'] if humanidades else False
+        'concluida': humanidades_cursadas['concluida'] if humanidades_cursadas else False
     })
 
-    # Adiciona as outras trilhas cursadas e preenche com placeholders
+    # Adiciona "Optativas Isoladas" se houver alguma, logo após Humanidades
+    if isolated_optativas:
+        resumo_trilhas.append({
+            'nome': 'Optativas Isoladas',
+            'is_isolated': True, # Flag para o template
+        })
+
+    # Preenche as 3 primeiras vagas de trilhas com as cursadas ou com placeholders
     for i in range(3):
         if i < len(outras_trilhas_cursadas):
             resumo_trilhas.append(outras_trilhas_cursadas[i])
         else:
             resumo_trilhas.append({'nome': f'Trilha Optativa {i+1}', 'concluida': False})
+
+    # Se houver mais de 3 trilhas cursadas, adiciona as extras no final da lista
+    if len(outras_trilhas_cursadas) > 3:
+        for i in range(3, len(outras_trilhas_cursadas)):
+            resumo_trilhas.append(outras_trilhas_cursadas[i])
 
     return {
         'aluno': aluno_obj,

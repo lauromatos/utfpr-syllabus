@@ -58,7 +58,9 @@
     <ul class="list-unstyled">
       {% for resumo in resumo_trilhas %}
         <li class="mb-1">
-          {% if resumo.concluida %}
+          {% if resumo.is_isolated %}
+            <i class="fas fa-stream text-info fa-fw mr-2"></i>
+          {% elif resumo.concluida %}
             <i class="fas fa-check-circle text-success fa-fw mr-2"></i>
           {% else %}
             <i class="fas fa-times-circle text-danger fa-fw mr-2"></i>
